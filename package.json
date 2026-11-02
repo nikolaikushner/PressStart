@@ -1,0 +1,11 @@
+{
+  "name": "retro-games",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "rom": "node scripts/build-gamepad-rom.mjs",
+    "library": "node scripts/sync-library.mjs",
+    "emulator": "node scripts/fetch-emulator.mjs",
+    "serve": "python3 -m http.server 8080"
+  }
+}
