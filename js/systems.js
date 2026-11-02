@@ -47,6 +47,86 @@ export function systemById(id) {
   return SYSTEMS.find((system) => system.id === id) || null;
 }
 
+const GB_LOGO = [0xce, 0xed, 0x66, 0x66, 0xcc, 0x0d, 0x00, 0x0b, 0x03, 0x73, 0x00, 0x83, 0x00, 0x0c, 0x00, 0x0d];
+const GBA_LOGO = [0x24, 0xff, 0xae, 0x51, 0x69, 0x9a, 0xa2, 0x21, 0x3d, 0x84, 0x82, 0x0a];
+
+function bytesAt(bytes, offset, signature) {
+  if (offset < 0 || offset + signature.length > bytes.length) return false;
+  for (let i = 0; i < signature.length; i += 1) {
+    if (bytes[offset + i] !== signature[i]) return false;
+  }
+  return true;
+}
+
+function textAt(bytes, offset, length) {
+  if (offset < 0 || offset + length > bytes.length) return "";
+  let text = "";
+  for (let i = 0; i < length; i += 1) {
+    const code = bytes[offset + i];
+    text += code >= 32 && code < 127 ? String.fromCharCode(code) : " ";
+  }
+  return text;
+}
+
+function looksLikeSnes(bytes) {
+  for (const offset of [0x7fc0, 0xffc0, 0x81c0, 0x101c0]) {
+    if (offset + 0x20 > bytes.length) continue;
+    const complement = bytes[offset + 0x1c] | (bytes[offset + 0x1d] << 8);
+    const checksum = bytes[offset + 0x1e] | (bytes[offset + 0x1f] << 8);
+    if ((complement ^ checksum) === 0xffff && checksum !== 0 && checksum !== 0xffff) return true;
+  }
+  return false;
+}
+
+function looksLikeSms(bytes) {
+  for (const offset of [0x7ff0, 0x3ff0, 0x1ff0]) {
+    if (textAt(bytes, offset, 8) !== "TMR SEGA") continue;
+    const kind = bytes[offset + 0x0f] >> 4;
+    return kind >= 5 ? "segaGG" : "segaMS";
+  }
+  return "";
+}
+
+function zipInnerName(bytes) {
+  if (!bytesAt(bytes, 0, [0x50, 0x4b, 0x03, 0x04])) return "";
+  const nameLength = bytes[26] | (bytes[27] << 8);
+  return textAt(bytes, 30, nameLength).trim();
+}
+
+function detectFromBytes(bytes) {
+  if (bytesAt(bytes, 0, [0x4e, 0x45, 0x53, 0x1a])) return systemById("nes");
+  if (
+    bytesAt(bytes, 0, [0x80, 0x37, 0x12, 0x40])
+    || bytesAt(bytes, 0, [0x37, 0x80, 0x40, 0x12])
+    || bytesAt(bytes, 0, [0x40, 0x12, 0x37, 0x80])
+  ) return systemById("n64");
+  if (bytesAt(bytes, 0x04, GBA_LOGO)) return systemById("gba");
+  if (bytesAt(bytes, 0x104, GB_LOGO)) {
+    const flag = bytes[0x143];
+    return systemById(flag === 0x80 || flag === 0xc0 ? "gbc" : "gb");
+  }
+  if (textAt(bytes, 0x100, 4) === "SEGA") return systemById("segaMD");
+  const sms = looksLikeSms(bytes);
+  if (sms) return systemById(sms);
+  if (looksLikeSnes(bytes)) return systemById("snes");
+  return null;
+}
+
+export function detectSystem(data, filename = "") {
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data || []);
+  const fromBytes = detectFromBytes(bytes);
+  if (fromBytes) return fromBytes;
+  const inner = zipInnerName(bytes);
+  return systemFromPath(inner || filename);
+}
+
+export function romFilename(filename, system) {
+  const extension = system?.extensions?.[0] || "rom";
+  const cleaned = String(filename || "game").replace(/(\.(heic|jpg|jpeg|png|webp|gif))+$/i, "");
+  const stem = cleaned.replace(/\.[^.]+$/, "") || "game";
+  return `${stem}.${extension}`;
+}
+
 export function systemFromPath(relativePath) {
   const parts = String(relativePath).split(/[/\\]/).filter(Boolean);
   const file = parts.at(-1) || "";
@@ -66,7 +146,8 @@ export function systemFromPath(relativePath) {
 }
 
 export function prettyTitle(filename) {
-  let name = String(filename).replace(/\.[^.]+$/, "");
+  let name = String(filename).replace(/(\.(heic|jpg|jpeg|png|webp|gif))+(?=\.|$)/gi, "");
+  name = name.replace(/\.[^.]+$/, "");
   name = name.replace(/\s*[([].*?[)\]]/g, "");
   name = name.replace(/[._]+/g, " ");
   name = name.replace(/\s+/g, " ").trim();

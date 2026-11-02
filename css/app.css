@@ -16,7 +16,7 @@ button { -webkit-tap-highlight-color: transparent; }
   min-height: 100dvh;
   background: #000;
   color: var(--ink);
-  padding: calc(12px + env(safe-area-inset-top)) 16px calc(108px + env(safe-area-inset-bottom));
+  padding: calc(12px + env(safe-area-inset-top)) 28px calc(108px + env(safe-area-inset-bottom));
 }
 
 .top { position: sticky; top: 0; z-index: 2; background: linear-gradient(#000 70%, transparent); padding-bottom: 8px; }
@@ -90,7 +90,7 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 .group-head h2 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   letter-spacing: 0.04em;
 }
 .group-count {
@@ -107,7 +107,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px 10px;
+  gap: 12px 8px;
+  max-width: 520px;
 }
 
 .card {
@@ -123,10 +124,10 @@ button { -webkit-tap-highlight-color: transparent; }
   position: relative;
   display: grid;
   align-content: end;
-  aspect-ratio: 1 / 1.05;
-  border-radius: 8px;
+  aspect-ratio: 1 / 0.92;
+  border-radius: 7px;
   overflow: hidden;
-  padding: 8px;
+  padding: 6px;
   background: linear-gradient(160deg, #3f3f46, #18181b);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
 }
@@ -260,8 +261,14 @@ button { -webkit-tap-highlight-color: transparent; }
   overflow: hidden;
   box-shadow: 0 0 0 2px #111;
 }
-#game { width: 100%; height: 100%; }
-#game canvas { width: 100% !important; height: 100% !important; }
+#game { position: absolute; inset: 0; background: #000; }
+#game canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: #000;
+}
 #game .ejs_menu_bar,
 #game .ejs_context_menu,
 #game .ejs_settings_parent,

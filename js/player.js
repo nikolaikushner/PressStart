@@ -1,7 +1,7 @@
 import { kvGet, kvSet, persistStorage, stateKey, writeSaveMeta } from "./db.js";
 import { bindPad } from "./controls.js";
 import { watchGamepad } from "./gamepad.js";
-import { numericGameId, skinFor, systemById } from "./systems.js";
+import { numericGameId, romFilename, skinFor, systemById } from "./systems.js";
 
 const startButton = document.querySelector("#start");
 const toast = document.querySelector("#toast");
@@ -102,19 +102,30 @@ function press(index, value) {
   manager.simulateInput(0, index, value);
 }
 
-async function resolveGame() {
-  if (params.get("local") === "1") {
-    const local = await kvGet("local-rom");
-    if (!local?.data) return null;
-    return {
-      key: local.key,
-      title: local.title || local.name,
-      core: local.core,
-      system: local.system,
-      url: new File([local.data], local.name || "game.rom"),
-      biosUrl: "",
-    };
+async function resolveLocal() {
+  const wanted = params.get("local");
+  const stored = await kvGet("local-games");
+  const records = Array.isArray(stored) ? stored : [];
+  let record = records.find((item) => item?.id === wanted) || null;
+  if (!record) {
+    const single = await kvGet("local-rom");
+    if (single && (wanted === "1" || single.key === wanted || single.id === wanted)) record = single;
   }
+  if (!record?.data) return null;
+  const system = systemById(record.system);
+  const filename = romFilename(record.name || record.title, system);
+  return {
+    key: record.id || record.key,
+    title: record.title || record.name,
+    core: record.core || system?.core,
+    system: record.system,
+    url: new File([record.data], filename),
+    biosUrl: "",
+  };
+}
+
+async function resolveGame() {
+  if (params.has("local")) return resolveLocal();
   const id = params.get("id");
   if (!id) return null;
   const response = await fetch(new URL("roms/library.json", document.baseURI));
@@ -140,7 +151,7 @@ function mount(entry, hasSave) {
   window.EJS_gameUrl = entry.url;
   window.EJS_gameID = numericGameId(entry.key);
   window.EJS_pathtodata = new URL("vendor/emulatorjs/", document.baseURI).href;
-  window.EJS_startOnLoaded = false;
+  window.EJS_startOnLoaded = true;
   window.EJS_startButtonName = "Play";
   window.EJS_language = "en-US";
   window.EJS_disableAutoLang = false;
@@ -172,8 +183,8 @@ function mount(entry, hasSave) {
   };
   window.EJS_ready = () => {
     ready = true;
-    startButton.disabled = false;
-    startButton.textContent = hasSave && !fresh ? "Continue" : "Play";
+    startButton.hidden = true;
+    document.querySelector(".ejs_start_button")?.click();
   };
   window.EJS_onGameStart = () => {
     started = true;

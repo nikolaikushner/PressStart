@@ -1,11 +1,12 @@
-import { kvSet, persistStorage, readSaveMeta } from "./db.js";
+import { kvGet, kvSet, persistStorage, readSaveMeta } from "./db.js";
 import { describePad, watchGamepad } from "./gamepad.js";
 import {
   acceptList,
+  detectSystem,
   prettyTitle,
+  romFilename,
   slugId,
   systemById,
-  systemFromPath,
   SYSTEMS,
 } from "./systems.js";
 
@@ -30,7 +31,10 @@ for (const system of bundled) {
   pickerSystem.append(option);
 }
 
+const LOCAL_KEY = "local-games";
+
 let games = [];
+let localRecords = [];
 let query = "";
 let pendingFile = null;
 const folded = new Set(readFolded());
@@ -52,8 +56,18 @@ function orderOf(systemId) {
   return index === -1 ? 99 : index;
 }
 
+function shelf() {
+  const local = localRecords.map((record) => ({
+    id: record.id,
+    title: record.title,
+    system: record.system,
+    local: true,
+  }));
+  return [...games, ...local];
+}
+
 function render() {
-  const visible = games.filter((game) => {
+  const visible = shelf().filter((game) => {
     const haystack = `${game.title} ${game.system}`.toLowerCase();
     return haystack.includes(query);
   });
@@ -127,7 +141,10 @@ function render() {
       button.append(cover, name);
       button.addEventListener("click", () => {
         void persistStorage();
-        location.href = `play.html?id=${encodeURIComponent(game.id)}`;
+        const target = game.local
+          ? `play.html?local=${encodeURIComponent(game.id)}`
+          : `play.html?id=${encodeURIComponent(game.id)}`;
+        location.href = target;
       });
       grid.append(button);
     }
@@ -136,42 +153,68 @@ function render() {
   }
 }
 
-async function startLocal(file, system) {
-  const title = prettyTitle(file.name);
-  await kvSet("local-rom", {
-    key: `local:${slugId(file.name)}`,
-    title,
+async function readLocalGames() {
+  const stored = await kvGet(LOCAL_KEY);
+  const records = Array.isArray(stored) ? stored.filter((item) => item?.data) : [];
+  const single = await kvGet("local-rom");
+  if (single?.data && !records.some((item) => item.id === single.key || item.id === single.id)) {
+    records.unshift({
+      id: single.key || single.id,
+      title: single.title || prettyTitle(single.name || "Game"),
+      system: single.system,
+      core: single.core,
+      name: single.name,
+      data: single.data,
+    });
+  }
+  return records;
+}
+
+async function startLocal(file, system, bytes) {
+  const data = bytes || await file.arrayBuffer();
+  const filename = romFilename(file.name, system);
+  const record = {
+    id: `local:${slugId(filename)}`,
+    title: prettyTitle(filename),
     system: system.id,
     core: system.core,
-    name: file.name,
-    data: await file.arrayBuffer(),
-  });
+    name: filename,
+    data,
+  };
+  const next = localRecords.filter((item) => item.id !== record.id);
+  next.unshift(record);
+  localRecords = next;
+  await kvSet(LOCAL_KEY, next);
+  await kvSet("local-rom", { ...record, key: record.id });
   await persistStorage();
-  location.href = "play.html?local=1";
+  location.href = `play.html?local=${encodeURIComponent(record.id)}`;
 }
 
 fileInput.addEventListener("change", () => {
   const file = fileInput.files?.[0];
   fileInput.value = "";
   if (!file) return;
-  const system = systemFromPath(file.name);
-  if (!system || system.bundled === false) {
+  void file.arrayBuffer().then((bytes) => {
     pendingFile = file;
-    pickerLead.textContent = system
-      ? "This core is not bundled. Try it as"
-      : "Could not tell the console for";
-    pickerName.textContent = file.name;
-    picker.hidden = false;
-    return;
-  }
-  void startLocal(file, system);
+    pendingFile.bytes = bytes;
+    const system = detectSystem(bytes, file.name);
+    if (!system || system.bundled === false) {
+      pickerLead.textContent = system
+        ? "This core is not bundled. Try it as"
+        : "Could not tell the console for";
+      pickerName.textContent = file.name;
+      picker.hidden = false;
+      return;
+    }
+    void startLocal(file, system, bytes);
+  });
 });
 
 pickerGo.addEventListener("click", () => {
   const system = systemById(pickerSystem.value);
   if (!pendingFile || !system) return;
   picker.hidden = true;
-  void startLocal(pendingFile, system);
+  void startLocal(pendingFile, system, pendingFile.bytes);
 });
 
 search.addEventListener("input", () => {
@@ -184,17 +227,23 @@ watchGamepad((next) => {
   padName.textContent = next ? describePad(next) : "Gamepad";
 });
 
-let libraryReady = false;
+try {
+  localRecords = await readLocalGames();
+} catch {
+  localRecords = [];
+}
+
 try {
   const response = await fetch(new URL("roms/library.json", document.baseURI));
   if (!response.ok) throw new Error(String(response.status));
   const library = await response.json();
   games = library.games || [];
-  libraryReady = true;
 } catch {
-  empty.hidden = false;
-  empty.textContent = "Could not read the library. Open the site through a server, not as a file.";
+  if (!localRecords.length) {
+    empty.hidden = false;
+    empty.textContent = "Could not read the library. Open the site through a server, not as a file.";
+  }
 }
 
-if (libraryReady) render();
+render();
 void persistStorage();
