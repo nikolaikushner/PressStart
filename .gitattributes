@@ -6,7 +6,7 @@ vendor/emulatorjs/cores/*.data binary
 *.gb binary
 *.gbc binary
 *.gba binary
-*.md binary
+roms/**/*.md binary
 *.gen binary
 *.smd binary
 *.sms binary

@@ -1,13 +1,17 @@
 # Retro
 
-A retro game shelf for iPhone Safari. Games are grouped by console, the emulator cores ship with the site, and the bottom of the screen is a handheld shell with touch controls. A physical GameSir pad works alongside those buttons. Saves stay on the phone.
+Play Game Boy, GBA, NES, and SNES in the browser. The shelf looks like a handheld, the emulators are already in the site, and a GameSir pad works next to the touch buttons. Saves stay on your phone.
+
+**[Play now](https://nikolaikushner.github.io/retro-games/)**
+
+Games are grouped by console. The bottom of the screen is a shell with touch controls, and a physical GameSir pad works alongside those buttons.
 
 Commercial games do not belong here. `roms/nes/gamepad-test.nes` is a small original cartridge: the screen changes color when a button is held.
 
 ## Play on an iPhone
 
 1. Push the repository to GitHub and turn on Pages: Settings → Pages → Source: GitHub Actions.
-2. Open the site in Safari. The address is printed by the `Pages` workflow.
+2. Open [the site](https://nikolaikushner.github.io/retro-games/) in Safari.
 3. Pair the GameSir over Bluetooth. If the dot on the page stays gray, press any button on the pad. iOS only exposes a controller after a button press.
 4. If the buttons still do nothing, set the GameSir app to iOS or Xbox mode, not Switch, and pair the pad again.
 5. In Safari tap Share → Add to Home Screen. A home-screen icon hides the address bar, and iOS is less likely to wipe the site's data.
