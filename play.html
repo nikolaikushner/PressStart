@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#c5c8d0">
+  <meta name="theme-color" content="#000000">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,73 +12,26 @@
   <link rel="icon" href="favicon.svg">
   <link rel="stylesheet" href="css/app.css">
 </head>
-<body class="play skin-pocket">
+<body class="play">
   <div class="device">
-    <div class="power" aria-hidden="true"><span>OFF</span><b></b><span>ON</span></div>
-    <section class="well">
-      <p class="matrix-label"><span></span>DOT MATRIX WITH STEREO SOUND<span></span></p>
-      <div class="lcd-wrap">
-        <div class="lcd">
-          <div id="game"></div>
-          <button id="start" class="start-hit" type="button" disabled>Loading</button>
-        </div>
-      </div>
-      <div class="under-screen">
-        <p class="battery"><i id="pad-led"></i>BATTERY</p>
-        <div class="softkeys">
-          <button id="back" type="button" aria-label="Back">
-            <svg viewBox="0 0 24 24"><path d="M12 4v8M8.5 6.5a7 7 0 1 0 7 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-          <button id="restart" type="button" aria-label="Restart">
-            <svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2-4.9M19 4v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button id="save" type="button" aria-label="Save">
-            <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6zM8 4v6h7V4M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-          </button>
-          <button id="load" type="button" aria-label="Load">
-            <svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6zM12 11v6M9.5 14.5 12 17l2.5-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <div class="shoulders">
-      <button class="shoulder" type="button" data-btn="l">L</button>
-      <p class="shell-name">RETRO</p>
-      <button class="shoulder" type="button" data-btn="r">R</button>
-    </div>
-
-    <div class="controls">
-      <div class="dpad-well">
-        <div class="dpad" aria-label="D-pad">
-          <button type="button" data-btn="up" aria-label="Up"></button>
-          <button type="button" data-btn="left" aria-label="Left"></button>
-          <i></i>
-          <button type="button" data-btn="right" aria-label="Right"></button>
-          <button type="button" data-btn="down" aria-label="Down"></button>
-        </div>
-      </div>
-      <div class="face face-pocket">
-        <button class="round b" type="button" data-btn="b" aria-label="B"></button>
-        <span class="legend b">B</span>
-        <button class="round a" type="button" data-btn="a" aria-label="A"></button>
-        <span class="legend a">A</span>
-      </div>
-      <div class="face face-advance">
-        <button class="diamond x" type="button" data-btn="x">X</button>
-        <button class="diamond y" type="button" data-btn="y">Y</button>
-        <button class="diamond a" type="button" data-btn="a">A</button>
-        <button class="diamond b" type="button" data-btn="b">B</button>
+    <div class="screen">
+      <div class="lcd">
+        <div id="game"></div>
+        <button id="start" class="start-hit" type="button" disabled>Loading</button>
       </div>
     </div>
-
-    <div class="menu-row">
-      <span class="gear" aria-hidden="true">
-        <svg viewBox="0 0 24 24"><path d="M12 9.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm7 2.5-1.6-.4a5.7 5.7 0 0 0-.6-1.4l.8-1.4-1.4-1.4-1.4.8a5.7 5.7 0 0 0-1.4-.6L13 6h-2l-.4 1.6a5.7 5.7 0 0 0-1.4.6l-1.4-.8-1.4 1.4.8 1.4a5.7 5.7 0 0 0-.6 1.4L5 12l1.6.4c.1.5.3 1 .6 1.4l-.8 1.4 1.4 1.4 1.4-.8c.4.3.9.5 1.4.6L11 18h2l.4-1.6c.5-.1 1-.3 1.4-.6l1.4.8 1.4-1.4-.8-1.4c.3-.4.5-.9.6-1.4L19 12z" fill="currentColor"/></svg>
-      </span>
-      <button class="pill" type="button" data-btn="select">SELECT</button>
-      <button class="pill" type="button" data-btn="start">START</button>
-      <span class="grill" aria-hidden="true"></span>
+    <div class="shell">
+      <img id="shell" alt="">
+      <div id="hits"></div>
+    </div>
+  </div>
+  <div id="actions" class="sheet" hidden>
+    <div class="sheet-card">
+      <button id="back" type="button">Back</button>
+      <button id="save" type="button">Save</button>
+      <button id="load" type="button">Load</button>
+      <button id="restart" type="button">Restart</button>
+      <button id="actions-close" type="button">Close</button>
     </div>
   </div>
   <p id="toast" class="toast" hidden></p>

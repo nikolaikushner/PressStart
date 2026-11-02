@@ -193,20 +193,59 @@ function mount(entry, hasSave) {
   document.body.appendChild(script);
 }
 
-bindPad(document, press);
+const hits = document.querySelector("#hits");
+const actions = document.querySelector("#actions");
+
+async function applySkin(kind) {
+  const response = await fetch(new URL(`skins/${kind}.json`, document.baseURI));
+  const layout = await response.json();
+  document.querySelector("#shell").src = new URL(layout.image, document.baseURI).href;
+  hits.replaceChildren();
+  for (const button of layout.buttons) {
+    const el = document.createElement("button");
+    el.type = "button";
+    el.className = "hit";
+    el.style.left = `${button.x * 100}%`;
+    el.style.top = `${button.y * 100}%`;
+    el.style.width = `${button.w * 100}%`;
+    el.style.height = `${button.h * 100}%`;
+    if (button.btn === "menu") {
+      el.dataset.action = "menu";
+      el.setAttribute("aria-label", "Menu");
+      el.addEventListener("click", () => {
+        actions.hidden = false;
+      });
+    } else {
+      el.dataset.btn = button.btn;
+      el.setAttribute("aria-label", button.btn);
+    }
+    hits.appendChild(el);
+  }
+  bindPad(hits, press);
+}
+
 watchGamepad((next) => {
   document.body.classList.toggle("pad-on", Boolean(next));
 });
+document.querySelector("#actions-close").addEventListener("click", () => {
+  actions.hidden = true;
+});
+actions.addEventListener("click", (event) => {
+  if (event.target === actions) actions.hidden = true;
+});
 
 document.querySelector("#back").addEventListener("click", () => {
+  actions.hidden = true;
   void leave();
 });
 document.querySelector("#save").addEventListener("click", () => {
+  actions.hidden = true;
   void saveNow("Saved").then((ok) => {
     if (!ok) showToast("Press Play first");
   });
 });
 document.querySelector("#load").addEventListener("click", () => {
+  actions.hidden = true;
   if (!started) {
     showToast("Press Play first");
     return;
@@ -214,6 +253,7 @@ document.querySelector("#load").addEventListener("click", () => {
   void loadSnapshot().then((ok) => showToast(ok ? "Loaded" : "No save"));
 });
 document.querySelector("#restart").addEventListener("click", () => {
+  actions.hidden = true;
   fresh = true;
   resumeLoaded = true;
   startButton.textContent = "Play";
@@ -245,12 +285,13 @@ try {
   game = null;
 }
 
+const kind = game ? skinFor(game.system) : "pocket";
+await applySkin(kind);
+
 if (!game) {
   startButton.textContent = "No game";
 } else {
   const system = systemById(game.system);
-  document.body.classList.remove("skin-pocket", "skin-advance");
-  document.body.classList.add(`skin-${skinFor(game.system)}`);
   const ratio = { gb: [10, 9], gbc: [10, 9], gba: [3, 2] }[game.system] || [4, 3];
   document.documentElement.style.setProperty("--rw", String(ratio[0]));
   document.documentElement.style.setProperty("--rh", String(ratio[1]));

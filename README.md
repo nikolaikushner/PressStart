@@ -4,6 +4,8 @@ Play Game Boy, GBA, NES, and SNES in the browser. The shelf looks like a handhel
 
 **[Play now](https://nikolaikushner.github.io/retro-games/)**
 
+The shells are community skins from [Delta Skins](https://delta-skins.github.io/gbc.html). The Delta name is painted out.
+
 Games are grouped by console. The bottom of the screen is a shell with touch controls, and a physical GameSir pad works alongside those buttons.
 
 Commercial games do not belong here. `roms/nes/gamepad-test.nes` is a small original cartridge: the screen changes color when a button is held.

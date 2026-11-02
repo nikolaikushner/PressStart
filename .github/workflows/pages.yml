@@ -28,11 +28,12 @@ jobs:
       - run: node scripts/sync-library.mjs
       - name: Collect site
         run: |
-          mkdir -p _site/css _site/js _site/roms _site/vendor
+          mkdir -p _site/css _site/js _site/roms _site/vendor _site/skins
           cp index.html play.html manifest.webmanifest favicon.svg .nojekyll _site/
           cp css/app.css _site/css/
           cp js/*.js _site/js/
           cp -R roms/. _site/roms/
+          cp -R skins/. _site/skins/
           cp -R vendor/emulatorjs _site/vendor/
       - uses: actions/upload-pages-artifact@v3
         with:
