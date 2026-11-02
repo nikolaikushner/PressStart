@@ -1,6 +1,6 @@
-import { kvGet, kvSet, persistStorage, stateKey, writeSaveMeta } from "./db.js";
+import { coverKey, kvGet, kvSet, persistStorage, stateKey, writeSaveMeta } from "./db.js";
 import { bindPad } from "./controls.js";
-import { watchGamepad } from "./gamepad.js";
+import { driveGamepad } from "./gamepad.js";
 import { numericGameId, romFilename, skinFor, systemById } from "./systems.js";
 
 const startButton = document.querySelector("#start");
@@ -13,6 +13,41 @@ let resumeLoaded = false;
 let leaving = false;
 let ready = false;
 let toastTimer = 0;
+let stopPad = () => {};
+const audioContexts = [];
+
+function rememberAudio() {
+  for (const name of ["AudioContext", "webkitAudioContext"]) {
+    const Base = window[name];
+    if (typeof Base !== "function" || Base.__retro) continue;
+    function Wrapped(...args) {
+      const context = new Base(...args);
+      audioContexts.push(context);
+      return context;
+    }
+    Wrapped.prototype = Base.prototype;
+    Wrapped.__retro = true;
+    try {
+      window[name] = Wrapped;
+    } catch {
+      // The browser locked the constructor. The running context is resumed directly.
+    }
+  }
+}
+
+function resumeAudio() {
+  const contexts = [...audioContexts];
+  const running = window.EJS_emulator?.Module?.AL?.currentCtx?.audioCtx;
+  if (running) contexts.push(running);
+  for (const context of contexts) {
+    if (context?.state === "suspended") void context.resume().catch(() => {});
+  }
+}
+
+function dismissOverlay() {
+  window.EJS_emulator?.closePopup?.();
+  document.querySelectorAll("#game .ejs_popup_container").forEach((node) => node.remove());
+}
 
 function showToast(message) {
   toast.textContent = message;
@@ -75,6 +110,14 @@ function goLibrary() {
 
 async function leave() {
   try {
+    await Promise.race([
+      captureCover(),
+      new Promise((resolve) => window.setTimeout(resolve, 700)),
+    ]);
+  } catch {
+    // A missing picture just leaves the colored card.
+  }
+  try {
     await saveNow("");
   } catch {
     // The last automatic snapshot stays if this flush fails.
@@ -94,12 +137,88 @@ async function leave() {
 }
 
 function press(index, value) {
+  if (value === 1) resumeAudio();
   const manager = window.EJS_emulator?.gameManager;
-  if (!started || !manager?.simulateInput) {
-    if (value === 1) showToast("Press Play first");
-    return;
-  }
+  if (!started || !manager?.simulateInput) return;
   manager.simulateInput(0, index, value);
+}
+
+function varied(ctx, width, height) {
+  const data = ctx.getImageData(0, 0, width, height).data;
+  let min = 255;
+  let max = 0;
+  for (let i = 0; i < data.length; i += 16 * 4) {
+    const tone = data[i] * 0.3 + data[i + 1] * 0.59 + data[i + 2] * 0.11;
+    if (tone < min) min = tone;
+    if (tone > max) max = tone;
+  }
+  return max - min > 24;
+}
+
+function shrinkImage(blob) {
+  return new Promise((resolve) => {
+    const image = new Image();
+    const objectUrl = URL.createObjectURL(blob);
+    image.onload = () => {
+      const width = 200;
+      const height = Math.max(1, Math.round((width * image.height) / image.width));
+      const out = document.createElement("canvas");
+      out.width = width;
+      out.height = height;
+      const ctx = out.getContext("2d", { willReadFrequently: true });
+      ctx.drawImage(image, 0, 0, width, height);
+      URL.revokeObjectURL(objectUrl);
+      resolve(varied(ctx, width, height) ? out.toDataURL("image/jpeg", 0.72) : null);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      resolve(null);
+    };
+    image.src = objectUrl;
+  });
+}
+
+async function readCoreShot(manager) {
+  try {
+    manager.FS.unlink("/screenshot.png");
+  } catch {
+    // The first shot has nothing to replace.
+  }
+  try {
+    manager.functions.screenshot();
+  } catch {
+    return null;
+  }
+  for (const delay of [200, 350]) {
+    await new Promise((resolve) => window.setTimeout(resolve, delay));
+    try {
+      const bytes = manager.FS.readFile("/screenshot.png");
+      if (bytes?.length) return new Blob([bytes], { type: "image/png" });
+    } catch {
+      // The core has not written the file yet.
+    }
+  }
+  return null;
+}
+
+async function captureCover() {
+  if (!started || !game) return;
+  const manager = window.EJS_emulator?.gameManager;
+  let blob = null;
+  if (manager?.FS && manager.functions?.screenshot) blob = await readCoreShot(manager);
+  if (!blob) {
+    const canvas = document.querySelector("#game canvas");
+    if (!canvas?.width) return;
+    try {
+      blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    } catch {
+      blob = null;
+    }
+  }
+  if (!blob) return;
+  const url = await shrinkImage(blob);
+  if (!url) return;
+  await kvSet(coverKey(game.key), url);
 }
 
 async function resolveLocal() {
@@ -144,10 +263,11 @@ async function resolveGame() {
   };
 }
 
-function mount(entry, hasSave) {
+function mount(entry) {
+  rememberAudio();
   window.EJS_player = "#game";
   window.EJS_core = entry.core;
-  window.EJS_gameName = entry.title;
+  window.EJS_gameName = entry.title || "Game";
   window.EJS_gameUrl = entry.url;
   window.EJS_gameID = numericGameId(entry.key);
   window.EJS_pathtodata = new URL("vendor/emulatorjs/", document.baseURI).href;
@@ -189,6 +309,14 @@ function mount(entry, hasSave) {
   window.EJS_onGameStart = () => {
     started = true;
     startButton.hidden = true;
+    dismissOverlay();
+    stopPad();
+    stopPad = driveGamepad(press);
+    const overlayTimer = window.setInterval(dismissOverlay, 200);
+    window.setTimeout(() => window.clearInterval(overlayTimer), 8000);
+    window.setTimeout(() => {
+      void captureCover();
+    }, 3500);
     if (!fresh && !resumeLoaded) {
       resumeLoaded = true;
       window.setTimeout(() => {
@@ -213,13 +341,28 @@ async function applySkin(kind) {
   document.querySelector("#shell").src = new URL(layout.image, document.baseURI).href;
   hits.replaceChildren();
   for (const button of layout.buttons) {
+    const extra = button.btn === "start" || button.btn === "select" ? 0.05 : button.btn === "menu" ? 0.03 : 0.014;
+    let x = button.x - extra;
+    let y = button.y - extra;
+    let w = button.w + extra * 2;
+    let h = button.h + extra * 2;
+    if (x < 0) {
+      w += x;
+      x = 0;
+    }
+    if (y < 0) {
+      h += y;
+      y = 0;
+    }
+    if (x + w > 1) w = 1 - x;
+    if (y + h > 1) h = 1 - y;
     const el = document.createElement("button");
     el.type = "button";
     el.className = "hit";
-    el.style.left = `${button.x * 100}%`;
-    el.style.top = `${button.y * 100}%`;
-    el.style.width = `${button.w * 100}%`;
-    el.style.height = `${button.h * 100}%`;
+    el.style.left = `${x * 100}%`;
+    el.style.top = `${y * 100}%`;
+    el.style.width = `${w * 100}%`;
+    el.style.height = `${h * 100}%`;
     if (button.btn === "menu") {
       el.dataset.action = "menu";
       el.setAttribute("aria-label", "Menu");
@@ -235,9 +378,13 @@ async function applySkin(kind) {
   bindPad(hits, press);
 }
 
-watchGamepad((next) => {
-  document.body.classList.toggle("pad-on", Boolean(next));
-});
+document.addEventListener("pointerdown", () => resumeAudio(), true);
+document.addEventListener("selectstart", (event) => event.preventDefault());
+document.addEventListener("contextmenu", (event) => event.preventDefault());
+document.querySelector(".screen").addEventListener("touchstart", (event) => {
+  event.preventDefault();
+  resumeAudio();
+}, { passive: false });
 document.querySelector("#actions-close").addEventListener("click", () => {
   actions.hidden = true;
 });
@@ -306,13 +453,12 @@ if (!game) {
   const ratio = { gb: [10, 9], gbc: [10, 9], gba: [3, 2] }[game.system] || [4, 3];
   document.documentElement.style.setProperty("--rw", String(ratio[0]));
   document.documentElement.style.setProperty("--rh", String(ratio[1]));
-  document.title = game.title;
+  document.title = game.title || "Retro";
   if (system && system.bundled === false) {
     startButton.textContent = "No core";
     showToast("This core is not bundled with the site");
   } else {
-    const bytes = await existingState();
-    mount(game, Boolean(bytes));
+    mount(game);
   }
 }
 

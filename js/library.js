@@ -1,5 +1,4 @@
-import { kvGet, kvSet, persistStorage, readSaveMeta } from "./db.js";
-import { describePad, watchGamepad } from "./gamepad.js";
+import { coverKey, kvGet, kvSet, persistStorage, readSaveMeta } from "./db.js";
 import {
   acceptList,
   detectSystem,
@@ -12,8 +11,6 @@ import {
 
 const list = document.querySelector("#list");
 const search = document.querySelector("#search");
-const pad = document.querySelector("#pad");
-const padName = document.querySelector("#pad-name");
 const fileInput = document.querySelector("#file");
 const picker = document.querySelector("#picker");
 const pickerName = document.querySelector("#picker-name");
@@ -37,6 +34,7 @@ let games = [];
 let localRecords = [];
 let query = "";
 let pendingFile = null;
+let shots = new Map();
 const folded = new Set(readFolded());
 
 function readFolded() {
@@ -116,11 +114,13 @@ function render() {
       const cover = document.createElement("span");
       cover.className = "cover";
       cover.dataset.system = game.system;
-      if (game.cover) {
+      const shot = shots.get(game.id);
+      if (shot || game.cover) {
         cover.classList.add("has-art");
         const image = document.createElement("img");
         image.alt = "";
-        image.src = new URL(`roms/${game.cover}`, document.baseURI).href;
+        image.draggable = false;
+        image.src = shot || new URL(`roms/${game.cover}`, document.baseURI).href;
         cover.append(image);
       }
       const kicker = document.createElement("span");
@@ -167,7 +167,26 @@ async function readLocalGames() {
       data: single.data,
     });
   }
+  let changed = false;
+  for (const record of records) {
+    const system = detectSystem(record.data, record.name || record.title);
+    if (!system || system.bundled === false || system.id === record.system) continue;
+    record.system = system.id;
+    record.core = system.core;
+    record.name = romFilename(record.name || record.title, system);
+    changed = true;
+  }
+  if (changed) await kvSet(LOCAL_KEY, records);
   return records;
+}
+
+async function loadShots() {
+  const next = new Map();
+  await Promise.all(shelf().map(async (game) => {
+    const shot = await kvGet(coverKey(game.id));
+    if (typeof shot === "string" && shot.startsWith("data:image/")) next.set(game.id, shot);
+  }));
+  shots = next;
 }
 
 async function startLocal(file, system, bytes) {
@@ -222,11 +241,6 @@ search.addEventListener("input", () => {
   render();
 });
 
-watchGamepad((next) => {
-  pad.classList.toggle("on", Boolean(next));
-  padName.textContent = next ? describePad(next) : "Gamepad";
-});
-
 try {
   localRecords = await readLocalGames();
 } catch {
@@ -245,5 +259,10 @@ try {
   }
 }
 
+try {
+  await loadShots();
+} catch {
+  shots = new Map();
+}
 render();
 void persistStorage();

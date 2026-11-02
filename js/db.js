@@ -73,3 +73,7 @@ export function writeSaveMeta(gameKey, savedAt) {
 export function stateKey(gameKey) {
   return `state:${gameKey}`;
 }
+
+export function coverKey(gameKey) {
+  return `cover:${gameKey}`;
+}
