@@ -54,12 +54,16 @@ export function driveGamepad(onButton) {
   const latched = new Map();
   let down = new Set();
   let frame = 0;
+  let watching = false;
+
   const tick = () => {
     frame = requestAnimationFrame(tick);
     const pads = navigator.getGamepads ? navigator.getGamepads() : [];
     const next = new Set();
+    let seen = false;
     for (const pad of pads) {
       if (!pad) continue;
+      seen = true;
       for (const [from, to] of BUTTONS) {
         const button = pad.buttons[from];
         if (button && (button.pressed || button.value > 0.5)) next.add(to);
@@ -70,6 +74,12 @@ export function driveGamepad(onButton) {
       if (x > 0.55) next.add(7);
       if (y < -0.55) next.add(4);
       if (y > 0.55) next.add(5);
+    }
+    if (!seen && !latched.size && !down.size) {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      watching = false;
+      return;
     }
     const now = performance.now();
     for (const index of next) latched.set(index, now + LATCH_MS);
@@ -83,13 +93,24 @@ export function driveGamepad(onButton) {
     for (const index of down) {
       if (!active.has(index)) onButton(index, 0);
     }
-    // A short tap is held a little longer so the core sees it. Held buttons
-    // stay with the emulator's own poll and are not sent again every frame.
     for (const index of latched.keys()) {
       if (!next.has(index)) onButton(index, 1);
     }
     down = active;
   };
-  frame = requestAnimationFrame(tick);
-  return () => cancelAnimationFrame(frame);
+
+  const wake = () => {
+    if (watching) return;
+    watching = true;
+    frame = requestAnimationFrame(tick);
+  };
+
+  window.addEventListener("gamepadconnected", wake);
+  window.addEventListener("pointerdown", wake);
+  if (connectedPad()) wake();
+  return () => {
+    window.removeEventListener("gamepadconnected", wake);
+    window.removeEventListener("pointerdown", wake);
+    if (frame) cancelAnimationFrame(frame);
+  };
 }

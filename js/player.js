@@ -252,7 +252,6 @@ function mount(entry) {
   window.EJS_disableAutoLang = false;
   window.EJS_color = "#e23d78";
   window.EJS_backgroundColor = "#070707";
-  window.EJS_fixedSaveInterval = 15000;
   window.EJS_askBeforeExit = false;
   window.EJS_biosUrl = entry.biosUrl || "";
   window.EJS_defaultOptions = { "save-state-location": "browser" };
@@ -287,11 +286,8 @@ function mount(entry) {
     dismissOverlay();
     stopPad();
     stopPad = driveGamepad(press);
-    const overlayTimer = window.setInterval(dismissOverlay, 200);
-    window.setTimeout(() => window.clearInterval(overlayTimer), 8000);
-    window.setTimeout(() => {
-      void captureCover();
-    }, 8000);
+    const overlayTimer = window.setInterval(dismissOverlay, 400);
+    window.setTimeout(() => window.clearInterval(overlayTimer), 2500);
     if (!fresh && !resumeLoaded) {
       resumeLoaded = true;
       window.setTimeout(() => {
@@ -424,9 +420,6 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("pagehide", () => {
   void saveNow("");
 });
-window.setInterval(() => {
-  void saveNow("");
-}, 45000);
 
 try {
   game = await resolveGame();
