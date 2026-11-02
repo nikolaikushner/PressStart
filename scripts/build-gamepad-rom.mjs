@@ -98,18 +98,18 @@ function buildPrg() {
 
   for (const fix of fixups) {
     const target = labels.get(fix.name);
-    if (target == null) throw new Error(`Нет метки ${fix.name}`);
+    if (target == null) throw new Error(`Missing label ${fix.name}`);
     if (fix.type === "abs") {
       bytes[fix.at] = target & 255;
       bytes[fix.at + 1] = (target >> 8) & 255;
       continue;
     }
     const delta = target - fix.from;
-    if (delta < -128 || delta > 127) throw new Error(`Ветка ${fix.name} слишком далеко: ${delta}`);
+    if (delta < -128 || delta > 127) throw new Error(`Branch ${fix.name} is out of range: ${delta}`);
     bytes[fix.at] = delta & 255;
   }
 
-  if (bytes.length > 16384 - 6) throw new Error(`PRG слишком большой: ${bytes.length}`);
+  if (bytes.length > 16384 - 6) throw new Error(`PRG is too large: ${bytes.length}`);
 
   const prg = Buffer.alloc(16384, 0xff);
   Buffer.from(bytes).copy(prg);
@@ -124,8 +124,8 @@ function buildPrg() {
 
   const reset = labels.get("reset") - origin;
   const nmi = labels.get("nmi") - origin;
-  if (prg[reset] !== 0x78) throw new Error("Reset не начинается с SEI");
-  if (prg[nmi] !== 0xa9) throw new Error("NMI не начинается с LDA");
+  if (prg[reset] !== 0x78) throw new Error("Reset does not start with SEI");
+  if (prg[nmi] !== 0xa9) throw new Error("NMI does not start with LDA");
   return prg;
 }
 
@@ -139,4 +139,4 @@ const rom = Buffer.concat([header, buildPrg(), Buffer.alloc(8192, 0)]);
 const destination = path.join(root, "roms", "nes", "gamepad-test.nes");
 await mkdir(path.dirname(destination), { recursive: true });
 await writeFile(destination, rom);
-console.log(`Записан ${destination} (${rom.length} байт)`);
+console.log(`Wrote ${destination} (${rom.length} bytes)`);

@@ -1,6 +1,6 @@
 {
   "nes/gamepad-test.nes": {
-    "title": "Проверка геймпада",
-    "blurb": "Свой тестовый картридж. Нажми одну кнопку: B снизу — розовый, A справа — белый, вверх — зелёный, вниз — жёлтый, влево — синий, вправо — оранжевый, Select — красный, Start — голубой."
+    "title": "Gamepad test",
+    "blurb": "An original test cartridge. Hold one button: B is pink, A is white, Up is green, Down is yellow, Left is blue, Right is orange, Select is red, Start is cyan."
   }
 }

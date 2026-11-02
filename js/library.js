@@ -44,11 +44,7 @@ function readFolded() {
 }
 
 function gamesWord(count) {
-  const mod10 = count % 10;
-  const mod100 = count % 100;
-  if (mod10 === 1 && mod100 !== 11) return `${count} игра`;
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${count} игры`;
-  return `${count} игр`;
+  return count === 1 ? "1 game" : `${count} games`;
 }
 
 function orderOf(systemId) {
@@ -162,8 +158,8 @@ fileInput.addEventListener("change", () => {
   if (!system || system.bundled === false) {
     pendingFile = file;
     pickerLead.textContent = system
-      ? "Это ядро не встроено. Можно попробовать как"
-      : "Не узналась приставка для";
+      ? "This core is not bundled. Try it as"
+      : "Could not tell the console for";
     pickerName.textContent = file.name;
     picker.hidden = false;
     return;
@@ -185,7 +181,7 @@ search.addEventListener("input", () => {
 
 watchGamepad((next) => {
   pad.classList.toggle("on", Boolean(next));
-  padName.textContent = next ? describePad(next) : "Геймпад";
+  padName.textContent = next ? describePad(next) : "Gamepad";
 });
 
 let libraryReady = false;
@@ -197,7 +193,7 @@ try {
   libraryReady = true;
 } catch {
   empty.hidden = false;
-  empty.textContent = "Не удалось прочитать библиотеку. Открой сайт через сервер, не как файл.";
+  empty.textContent = "Could not read the library. Open the site through a server, not as a file.";
 }
 
 if (libraryReady) render();

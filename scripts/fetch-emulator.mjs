@@ -51,4 +51,4 @@ for Game Boy, Game Boy Color, Game Boy Advance, NES, SNES, Mega Drive, Master Sy
 and Game Gear. Each core keeps the license it was released under upstream.
 `;
 await writeFile(path.join(dest, "NOTICE"), notice);
-console.log("Ядра лежат в vendor/emulatorjs");
+console.log("Cores are in vendor/emulatorjs");

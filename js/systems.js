@@ -94,10 +94,10 @@ export function numericGameId(key) {
 
 export function formatBytes(bytes) {
   const size = Number(bytes) || 0;
-  if (size < 1024) return `${size} Б`;
-  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} КБ`;
+  if (size < 1024) return `${size} B`;
+  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
   const mb = size / (1024 * 1024);
-  return `${mb >= 10 ? mb.toFixed(0) : mb.toFixed(1)} МБ`;
+  return `${mb >= 10 ? mb.toFixed(0) : mb.toFixed(1)} MB`;
 }
 
 export function acceptList() {

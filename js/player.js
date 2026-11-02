@@ -96,7 +96,7 @@ async function leave() {
 function press(index, value) {
   const manager = window.EJS_emulator?.gameManager;
   if (!started || !manager?.simulateInput) {
-    if (value === 1) showToast("Сначала нажми «Играть»");
+    if (value === 1) showToast("Press Play first");
     return;
   }
   manager.simulateInput(0, index, value);
@@ -141,7 +141,7 @@ function mount(entry, hasSave) {
   window.EJS_gameID = numericGameId(entry.key);
   window.EJS_pathtodata = new URL("vendor/emulatorjs/", document.baseURI).href;
   window.EJS_startOnLoaded = false;
-  window.EJS_startButtonName = "Играть";
+  window.EJS_startButtonName = "Play";
   window.EJS_language = "en-US";
   window.EJS_disableAutoLang = false;
   window.EJS_color = "#e23d78";
@@ -173,7 +173,7 @@ function mount(entry, hasSave) {
   window.EJS_ready = () => {
     ready = true;
     startButton.disabled = false;
-    startButton.textContent = hasSave && !fresh ? "Продолжить" : "Играть";
+    startButton.textContent = hasSave && !fresh ? "Continue" : "Play";
   };
   window.EJS_onGameStart = () => {
     started = true;
@@ -182,7 +182,7 @@ function mount(entry, hasSave) {
       resumeLoaded = true;
       window.setTimeout(() => {
         void loadSnapshot().then((loaded) => {
-          if (loaded) showToast("Продолжаем");
+          if (loaded) showToast("Resuming");
         });
       }, 800);
     }
@@ -202,28 +202,28 @@ document.querySelector("#back").addEventListener("click", () => {
   void leave();
 });
 document.querySelector("#save").addEventListener("click", () => {
-  void saveNow("Сохранено").then((ok) => {
-    if (!ok) showToast("Сначала нажми «Играть»");
+  void saveNow("Saved").then((ok) => {
+    if (!ok) showToast("Press Play first");
   });
 });
 document.querySelector("#load").addEventListener("click", () => {
   if (!started) {
-    showToast("Сначала нажми «Играть»");
+    showToast("Press Play first");
     return;
   }
-  void loadSnapshot().then((ok) => showToast(ok ? "Загружено" : "Нет сохранения"));
+  void loadSnapshot().then((ok) => showToast(ok ? "Loaded" : "No save"));
 });
 document.querySelector("#restart").addEventListener("click", () => {
   fresh = true;
   resumeLoaded = true;
-  startButton.textContent = "Играть";
+  startButton.textContent = "Play";
   const manager = window.EJS_emulator?.gameManager;
   if (started && manager?.restart) manager.restart();
 });
 startButton.addEventListener("click", () => {
   const inner = document.querySelector(".ejs_start_button");
   if (!ready || !inner) {
-    showToast("Эмулятор ещё грузится");
+    showToast("The emulator is still loading");
     return;
   }
   inner.click();
@@ -246,7 +246,7 @@ try {
 }
 
 if (!game) {
-  startButton.textContent = "Нет игры";
+  startButton.textContent = "No game";
 } else {
   const system = systemById(game.system);
   document.body.classList.remove("skin-pocket", "skin-advance");
@@ -256,8 +256,8 @@ if (!game) {
   document.documentElement.style.setProperty("--rh", String(ratio[1]));
   document.title = game.title;
   if (system && system.bundled === false) {
-    startButton.textContent = "Нет ядра";
-    showToast("Это ядро не встроено в сайт");
+    startButton.textContent = "No core";
+    showToast("This core is not bundled with the site");
   } else {
     const bytes = await existingState();
     mount(game, Boolean(bytes));

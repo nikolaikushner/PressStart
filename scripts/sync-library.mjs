@@ -105,4 +105,4 @@ const library = {
 };
 
 await writeFile(path.join(romRoot, "library.json"), `${JSON.stringify(library, null, 2)}\n`);
-console.log(`В библиотеке ${games.length} ROM`);
+console.log(`Library has ${games.length} ROM${games.length === 1 ? "" : "s"}`);

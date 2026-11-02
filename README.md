@@ -1,54 +1,54 @@
 # Retro
 
-Полка ретро-игр для Safari на iPhone. Игры сгруппированы по консолям, ядра лежат в самом сайте, снизу корпус с сенсорными кнопками. Физический GameSir работает вместе с ними. Сохранения остаются на телефоне.
+A retro game shelf for iPhone Safari. Games are grouped by console, the emulator cores ship with the site, and the bottom of the screen is a handheld shell with touch controls. A physical GameSir pad works alongside those buttons. Saves stay on the phone.
 
-Сюда не входят чужие коммерческие игры. В `roms/nes/gamepad-test.nes` лежит маленький свой картридж: экран меняет цвет от кнопок.
+Commercial games do not belong here. `roms/nes/gamepad-test.nes` is a small original cartridge: the screen changes color when a button is held.
 
-## Как играть на iPhone
+## Play on an iPhone
 
-1. Залей репозиторий на GitHub и включи Pages: Settings → Pages → Source: GitHub Actions.
-2. Открой адрес сайта в Safari. Адрес появится в запуске workflow `Pages`.
-3. Подключи GameSir по Bluetooth. Если точка на странице серая, нажми любую кнопку на геймпаде: iOS показывает контроллер только после нажатия.
-4. Если кнопки не находятся, в приложении GameSir выбери режим iOS или Xbox, не Switch, и подключи геймпад заново.
-5. В Safari нажми «Поделиться» → «На экран Домой». Отдельная иконка прячет адресную строку, и iOS реже стирает данные сайта.
+1. Push the repository to GitHub and turn on Pages: Settings → Pages → Source: GitHub Actions.
+2. Open the site in Safari. The address is printed by the `Pages` workflow.
+3. Pair the GameSir over Bluetooth. If the dot on the page stays gray, press any button on the pad. iOS only exposes a controller after a button press.
+4. If the buttons still do nothing, set the GameSir app to iOS or Xbox mode, not Switch, and pair the pad again.
+5. In Safari tap Share → Add to Home Screen. A home-screen icon hides the address bar, and iOS is less likely to wipe the site's data.
 
-Сохранение игры из меню самой игры пишется в браузер примерно каждые 15 секунд. Снимок «ровно на этом месте» пишется каждые 45 секунд, при уходе со страницы и по кнопке «Сохранить». В следующий раз кнопка называется «Продолжить».
+In-game battery saves are written to the browser about every 15 seconds. A snapshot of the exact moment is written every 45 seconds, when you leave the page, and when you tap Save. Next time the button says Continue.
 
-Сохранения живут в этом Safari на этом iPhone. В git они не попадают. Кнопка «Открыть ROM с iPhone» тоже играет файл только локально и не загружает его в репозиторий.
+Saves live in this Safari on this iPhone. They are not committed. Add also plays a file from the phone locally and does not upload it to the repository.
 
-## Как добавить ROM
+## Add a ROM
 
-Положи файл в папку приставки и обнови каталог:
+Put the file in the console folder and refresh the catalog:
 
 ```bash
 node scripts/sync-library.mjs
 ```
 
-На Pages каталог собирается заново при каждом деплое, руками его коммитить не обязательно.
+Pages rebuilds the catalog on every deploy, so committing `roms/library.json` by hand is optional.
 
-| Папка | Приставка |
+| Folder | Console |
 | --- | --- |
 | `roms/nes` | NES |
 | `roms/snes` | SNES |
-| `roms/gb`, `roms/gbc` | Game Boy и Color |
+| `roms/gb`, `roms/gbc` | Game Boy and Color |
 | `roms/gba` | Game Boy Advance |
 | `roms/genesis` | Mega Drive |
 | `roms/n64` | Nintendo 64 |
-| `roms/psx` | PlayStation, файлы `.cue` |
-| `roms/bios` | BIOS, если ядро его просит |
+| `roms/psx` | PlayStation, `.cue` files |
+| `roms/bios` | BIOS, when a core asks for one |
 
-GitHub не принимает файл больше 100 МБ. Имя в полке берётся из имени файла; своё название можно записать в `roms/overrides.json`.
+GitHub rejects a file larger than 100 MB. The shelf title comes from the file name. Set your own title in `roms/overrides.json`.
 
-Для американского PlayStation положи `roms/bios/scph5501.bin`. Для Sega CD — `roms/bios/bios_CD_U.bin`.
+For a US PlayStation, add `roms/bios/scph5501.bin`. For Sega CD, add `roms/bios/bios_CD_U.bin`.
 
-В сайте уже лежат ядра Game Boy, Game Boy Color, Game Boy Advance, NES, SNES, Mega Drive, Master System и Game Gear (`vendor/emulatorjs`, EmulatorJS 4.2.3). Nintendo 64, DS и PlayStation в этот набор не входят.
+The site already includes cores for Game Boy, Game Boy Color, Game Boy Advance, NES, SNES, Mega Drive, Master System, and Game Gear (`vendor/emulatorjs`, EmulatorJS 4.2.3). Nintendo 64, DS, and PlayStation are not in that set.
 
-Обложка берётся из картинки с тем же именем, что и ROM: `roms/gba/game.gba` и `roms/gba/game.png`.
+A cover is a picture with the same name as the ROM: `roms/gba/game.gba` and `roms/gba/game.png`.
 
-Локально:
+Locally:
 
 ```bash
 npm run serve
 ```
 
-Открой `http://localhost:8080`.
+Open `http://localhost:8080`.

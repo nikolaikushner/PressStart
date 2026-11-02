@@ -1,7 +1,7 @@
 export function padLabel(pad) {
-  const raw = (pad?.id || "Геймпад").replace(/\s*\([^)]*\)\s*/g, " ");
+  const raw = (pad?.id || "Gamepad").replace(/\s*\([^)]*\)\s*/g, " ");
   const name = raw.replace(/\s+/g, " ").trim();
-  return name || "Геймпад";
+  return name || "Gamepad";
 }
 
 export function connectedPad() {
@@ -27,7 +27,7 @@ export function watchGamepad(onChange) {
 }
 
 export function describePad(pad) {
-  if (!navigator.getGamepads) return "Этот браузер не видит геймпады";
-  if (!pad) return "Нажми кнопку на GameSir";
+  if (!navigator.getGamepads) return "This browser cannot see gamepads";
+  if (!pad) return "Press a button on the GameSir";
   return padLabel(pad);
 }

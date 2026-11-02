@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -20,30 +20,30 @@
         <svg viewBox="0 0 24 24"><path d="M7 8h2v2h2V8h2v2h-2v2H9v-2H7zm8.2 1.2a2 2 0 1 1 .01 0zM16 14.2a1.4 1.4 0 1 1 .01 0zM18.6 12.2a1.3 1.3 0 1 1 .01 0z" fill="currentColor"/></svg>
       </span>
       <h1>RETRO</h1>
-      <span id="pad" class="pad-pill"><span class="dot"></span><span id="pad-name">Геймпад</span></span>
+      <span id="pad" class="pad-pill"><span class="dot"></span><span id="pad-name">Gamepad</span></span>
     </div>
     <label class="search">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="search" type="search" placeholder="Поиск игр" enterkeyhint="search">
+      <input id="search" type="search" placeholder="Search games" enterkeyhint="search">
     </label>
   </header>
   <main id="list" class="groups"></main>
-  <p id="empty" class="empty" hidden>Пока пусто. Нажми «Добавить» и выбери ROM, или положи файлы в папку консоли.</p>
+  <p id="empty" class="empty" hidden>Nothing here yet. Tap Add and choose a ROM, or drop files into a console folder.</p>
   <div id="picker" class="sheet" hidden>
     <div class="sheet-card">
-      <p><span id="picker-lead">Не узналась приставка для</span> <strong id="picker-name"></strong></p>
-      <select id="picker-system" aria-label="Приставка"></select>
-      <button id="picker-go" type="button">Играть</button>
+      <p><span id="picker-lead">Could not tell the console for</span> <strong id="picker-name"></strong></p>
+      <select id="picker-system" aria-label="Console"></select>
+      <button id="picker-go" type="button">Play</button>
     </div>
   </div>
   <nav class="dock">
     <a class="dock-item on" href="./" aria-current="page">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18l4-9 3 5 2-3 5 7H5z" fill="currentColor"/></svg>
-      Игры
+      Games
     </a>
     <label class="dock-item">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v10M7 10l5-5 5 5M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Добавить
+      Add
       <input id="file" class="file-input" type="file">
     </label>
   </nav>
