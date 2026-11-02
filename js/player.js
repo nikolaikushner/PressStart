@@ -14,34 +14,10 @@ let leaving = false;
 let ready = false;
 let toastTimer = 0;
 let stopPad = () => {};
-const audioContexts = [];
-
-function rememberAudio() {
-  for (const name of ["AudioContext", "webkitAudioContext"]) {
-    const Base = window[name];
-    if (typeof Base !== "function" || Base.__retro) continue;
-    function Wrapped(...args) {
-      const context = new Base(...args);
-      audioContexts.push(context);
-      return context;
-    }
-    Wrapped.prototype = Base.prototype;
-    Wrapped.__retro = true;
-    try {
-      window[name] = Wrapped;
-    } catch {
-      // The browser locked the constructor. The running context is resumed directly.
-    }
-  }
-}
 
 function resumeAudio() {
-  const contexts = [...audioContexts];
-  const running = window.EJS_emulator?.Module?.AL?.currentCtx?.audioCtx;
-  if (running) contexts.push(running);
-  for (const context of contexts) {
-    if (context?.state === "suspended") void context.resume().catch(() => {});
-  }
+  const context = window.EJS_emulator?.Module?.AL?.currentCtx?.audioCtx;
+  if (context?.state === "suspended") void context.resume().catch(() => {});
 }
 
 function dismissOverlay() {
@@ -264,7 +240,6 @@ async function resolveGame() {
 }
 
 function mount(entry) {
-  rememberAudio();
   window.EJS_player = "#game";
   window.EJS_core = entry.core;
   window.EJS_gameName = entry.title || "Game";
@@ -316,7 +291,7 @@ function mount(entry) {
     window.setTimeout(() => window.clearInterval(overlayTimer), 8000);
     window.setTimeout(() => {
       void captureCover();
-    }, 3500);
+    }, 8000);
     if (!fresh && !resumeLoaded) {
       resumeLoaded = true;
       window.setTimeout(() => {
@@ -385,6 +360,22 @@ document.querySelector(".screen").addEventListener("touchstart", (event) => {
   event.preventDefault();
   resumeAudio();
 }, { passive: false });
+const fail = document.querySelector("#fail");
+document.querySelector("#fail-back").addEventListener("click", () => {
+  void leave();
+});
+document.querySelector("#fail-again").addEventListener("click", () => {
+  location.reload();
+});
+window.setInterval(() => {
+  const message = document.querySelector("#game .ejs_error_text")?.textContent?.trim();
+  if (!message || !fail.hidden) return;
+  const text = document.querySelector("#fail-text");
+  text.textContent = message === "Failed to start game"
+    ? "This game did not start. The file may be for a console that is not built in, or the phone ran out of memory."
+    : message;
+  fail.hidden = false;
+}, 700);
 document.querySelector("#actions-close").addEventListener("click", () => {
   actions.hidden = true;
 });

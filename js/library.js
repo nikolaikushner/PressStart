@@ -219,7 +219,7 @@ fileInput.addEventListener("change", () => {
     const system = detectSystem(bytes, file.name);
     if (!system || system.bundled === false) {
       pickerLead.textContent = system
-        ? "This core is not bundled. Try it as"
+        ? `${system.label} is not included here. Trying another console usually will not start it.`
         : "Could not tell the console for";
       pickerName.textContent = file.name;
       picker.hidden = false;

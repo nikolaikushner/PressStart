@@ -101,6 +101,7 @@ function detectFromBytes(bytes) {
     || bytesAt(bytes, 0, [0x40, 0x12, 0x37, 0x80])
   ) return systemById("n64");
   if (bytesAt(bytes, 0x04, GBA_LOGO)) return systemById("gba");
+  if (bytesAt(bytes, 0xc0, GBA_LOGO)) return systemById("nds");
   if (bytesAt(bytes, 0x104, GB_LOGO)) {
     const flag = bytes[0x143];
     return systemById(flag === 0x80 || flag === 0xc0 ? "gbc" : "gb");
@@ -117,7 +118,8 @@ export function detectSystem(data, filename = "") {
   const fromBytes = detectFromBytes(bytes);
   if (fromBytes) return fromBytes;
   const inner = zipInnerName(bytes);
-  return systemFromPath(inner || filename);
+  const name = inner || String(filename).replace(/(\.(heic|jpg|jpeg|png|webp|gif))+$/i, "");
+  return systemFromPath(name);
 }
 
 export function romFilename(filename, system) {

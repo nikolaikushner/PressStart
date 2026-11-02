@@ -83,9 +83,10 @@ export function driveGamepad(onButton) {
     for (const index of down) {
       if (!active.has(index)) onButton(index, 0);
     }
-    // Keep a short tap held across the emulator's own slower poll.
-    if (active.size) {
-      for (const index of active) onButton(index, 1);
+    // A short tap is held a little longer so the core sees it. Held buttons
+    // stay with the emulator's own poll and are not sent again every frame.
+    for (const index of latched.keys()) {
+      if (!next.has(index)) onButton(index, 1);
     }
     down = active;
   };
