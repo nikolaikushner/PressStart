@@ -6,7 +6,7 @@
 
 <p align="center">
   <strong>Native iPhone shelf</strong> for the Game Boy, GBA, NES, SNES, and Mega Drive games you own.<br>
-  Full-speed play · GameSir ready · Saves stay on your phone
+  Full-speed play · Works with gamepads · Saves stay on your phone
 </p>
 
 <p align="center">
@@ -50,7 +50,7 @@ open PressStart.xcodeproj
 ```
 
 4. Select your Apple Developer team, then run on an iPhone or simulator.
-5. Link `GBCDeltaCore`, `GBADeltaCore`, `NESDeltaCore`, `SNESDeltaCore`, and `GPGXDeltaCore` from `Vendor/` in Xcode for real gameplay. Without them the shelf, import, skins, and GameSir routing still build; play shows a core-missing message until the frameworks are linked.
+5. Link `GBCDeltaCore`, `GBADeltaCore`, `NESDeltaCore`, `SNESDeltaCore`, and `GPGXDeltaCore` from `Vendor/` in Xcode for real gameplay. Without them the shelf, import, skins, and gamepad routing still build; play shows a core-missing message until the frameworks are linked.
 
 `CoreRegistry` registers cores automatically when those modules are present (`canImport`).
 
@@ -59,7 +59,7 @@ open PressStart.xcodeproj
 - Dark shelf grouped by console, search, frosted **Games | Add** dock  
 - ROM import via Files with byte-based console detection  
 - Pocket / Advance on-screen shells (no console trademarks)  
-- Soft-pad hits + `GameController` GameSir polling  
+- Soft-pad hits + Apple `GameController` support for Bluetooth / USB gamepads
 - On-disk SRAM and save states under Documents  
 - Cover snapshots after play  
 - In-app Licenses (AGPL + engine attribution)

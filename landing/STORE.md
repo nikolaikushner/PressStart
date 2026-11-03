@@ -26,7 +26,7 @@ Press Start is a local emulator shelf. Users import ROM files they already own v
 1. Empty shelf with PRESS START wordmark and Add dock  
 2. Grouped library with a few covers  
 3. Play screen — handheld shell, game on top  
-4. Optional: GameSir connected toast / Licenses screen  
+4. Optional: gamepad connected / Licenses screen
 
 Capture on iPhone 15/16 Pro sizes in portrait.
 
