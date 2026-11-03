@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/press-start-icon.png" alt="Press Start" width="180" style="border-radius:22%">
+  <img src="brand/press-start-icon-readme.png" alt="Press Start" width="160">
 </p>
 
 <h1 align="center">Press Start</h1>
@@ -10,17 +10,25 @@
 </p>
 
 <p align="center">
-  <a href="https://nikolaikushner.github.io/PressStart/">Landing page</a>
+  <img alt="platforms" src="https://img.shields.io/badge/platforms-iOS%2017%2B-0a84ff?style=flat-square">
+  <img alt="Swift" src="https://img.shields.io/badge/Swift-SwiftUI-F05138?style=flat-square">
+  <img alt="engine" src="https://img.shields.io/badge/engine-DeltaCore-111111?style=flat-square">
+  <img alt="systems" src="https://img.shields.io/badge/systems-GB%20%7C%20GBA%20%7C%20NES%20%7C%20SNES%20%7C%20MD-34c759?style=flat-square">
+  <img alt="price" src="https://img.shields.io/badge/App%20Store-%241.49-0071e3?style=flat-square">
+  <img alt="status" src="https://img.shields.io/badge/status-alpha-ff9500?style=flat-square">
+  <img alt="license" src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=flat-square">
+</p>
+
+<p align="center">
+  <a href="https://nikolaikushner.github.io/PressStart/">Landing</a>
   ·
   <a href="landing/STORE.md">App Store prep</a>
   ·
   <a href="landing/privacy.html">Privacy</a>
   ·
+  <a href="SOURCE.md">Source</a>
+  ·
   <a href="LICENSE">AGPL-3.0</a>
-  ·
-  <a href="SOURCE.md">Corresponding source</a>
-  ·
-  Paid App Store ($1.49)
 </p>
 
 ---
