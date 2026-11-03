@@ -2,3 +2,26 @@
 node_modules/
 _site/
 .tmp-ejs/
+# Retired Safari / EmulatorJS shelf (kept locally only if present)
+css/
+js/
+skins/
+scripts/fetch-emulator.mjs
+scripts/sync-library.mjs
+scripts/build-gamepad-rom.mjs
+# Large core checkouts — use PressStart/scripts/bootstrap-cores.sh
+Vendor/DeltaCore/
+Vendor/GBCDeltaCore/
+Vendor/GBADeltaCore/
+Vendor/NESDeltaCore/
+Vendor/SNESDeltaCore/
+Vendor/GPGXDeltaCore/
+Vendor/emulatorjs/
+PressStart/.spm/
+PressStart/.derivedData/
+PressStart/PressStart.xcodeproj/
+PressStart/PressStart.xcworkspace/
+PressStart/*.xcworkspace/
+**/xcuserdata/
+**/DerivedData/
+.swiftpm/

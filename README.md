@@ -1,60 +1,69 @@
-# Retro
+<p align="center">
+  <img src="brand/press-start-logo.png" alt="Press Start" width="280">
+</p>
 
-Play Game Boy, GBA, NES, and SNES in the browser. The shelf looks like a handheld, the emulators are already in the site, and a GameSir pad works next to the touch buttons. Saves stay on your phone.
+<h1 align="center">Press Start</h1>
 
-**[Play now](https://nikolaikushner.github.io/retro-games/)**
+<p align="center">
+  <strong>Native iPhone shelf</strong> for the Game Boy, GBA, NES, SNES, and Mega Drive games you own.<br>
+  Full-speed play · GameSir ready · Saves stay on your phone
+</p>
 
-The shells are community skins from [Delta Skins](https://delta-skins.github.io/gbc.html). The Delta name is painted out.
+<p align="center">
+  <a href="https://nikolaikushner.github.io/PressStart/">Landing page</a>
+  ·
+  <a href="landing/STORE.md">App Store prep</a>
+  ·
+  <a href="landing/privacy.html">Privacy</a>
+  ·
+  <a href="LICENSE">AGPL-3.0</a>
+</p>
 
-Games are grouped by console. The bottom of the screen is a shell with touch controls, and a physical GameSir pad works alongside those buttons.
+---
 
-Commercial games do not belong here. `roms/nes/gamepad-test.nes` is a small original cartridge: the screen changes color when a button is held.
-
-## Play on an iPhone
-
-1. Push the repository to GitHub and turn on Pages: Settings → Pages → Source: GitHub Actions.
-2. Open [the site](https://nikolaikushner.github.io/retro-games/) in Safari.
-3. Pair the GameSir over Bluetooth. If the dot on the page stays gray, press any button on the pad. iOS only exposes a controller after a button press.
-4. If the buttons still do nothing, set the GameSir app to iOS or Xbox mode, not Switch, and pair the pad again.
-5. In Safari tap Share → Add to Home Screen. A home-screen icon hides the address bar, and iOS is less likely to wipe the site's data.
-
-In-game battery saves are written to the browser about every 15 seconds. A snapshot of the exact moment is written every 45 seconds, when you leave the page, and when you tap Save. Next time the button says Continue.
-
-Saves live in this Safari on this iPhone. They are not committed. Add also plays a file from the phone locally and does not upload it to the repository.
-
-## Add a ROM
-
-Put the file in the console folder and refresh the catalog:
-
-```bash
-node scripts/sync-library.mjs
-```
-
-Pages rebuilds the catalog on every deploy, so committing `roms/library.json` by hand is optional.
-
-| Folder | Console |
+| | |
 | --- | --- |
-| `roms/nes` | NES |
-| `roms/snes` | SNES |
-| `roms/gb`, `roms/gbc` | Game Boy and Color |
-| `roms/gba` | Game Boy Advance |
-| `roms/genesis` | Mega Drive |
-| `roms/n64` | Nintendo 64 |
-| `roms/psx` | PlayStation, `.cue` files |
-| `roms/bios` | BIOS, when a core asks for one |
+| **Brand** | Press Start |
+| **Bundle ID** | `com.nikolaikushner.pressstart` |
+| **Subtitle** | `Retro Emulator · GB GBA NES SNES` |
+| **Systems** | GB · GBC · GBA · NES · SNES · Mega Drive |
+| **UI** | SwiftUI shelf (not Delta branding) |
+| **Engine** | [DeltaCore](https://github.com/rileytestut/DeltaCore) + system cores |
 
-GitHub rejects a file larger than 100 MB. The shelf title comes from the file name. Set your own title in `roms/overrides.json`.
+The Safari / EmulatorJS player is retired. This repository is the **native app** plus a small marketing site for GitHub Pages.
 
-For a US PlayStation, add `roms/bios/scph5501.bin`. For Sega CD, add `roms/bios/bios_CD_U.bin`.
+## Build
 
-The site already includes cores for Game Boy, Game Boy Color, Game Boy Advance, NES, SNES, Mega Drive, Master System, and Game Gear (`vendor/emulatorjs`, EmulatorJS 4.2.3). Nintendo 64, DS, and PlayStation are not in that set.
-
-A cover is a picture with the same name as the ROM: `roms/gba/game.gba` and `roms/gba/game.png`.
-
-Locally:
+1. Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
+2. Bootstrap DeltaCore (and optionally the five system cores):
 
 ```bash
-npm run serve
+./PressStart/scripts/bootstrap-cores.sh
 ```
 
-Open `http://localhost:8080`.
+3. Generate and open the project:
+
+```bash
+cd PressStart
+xcodegen generate
+open PressStart.xcodeproj
+```
+
+4. Select your Apple Developer team, then run on an iPhone or simulator.
+5. Link `GBCDeltaCore`, `GBADeltaCore`, `NESDeltaCore`, `SNESDeltaCore`, and `GPGXDeltaCore` from `Vendor/` in Xcode for real gameplay. Without them the shelf, import, skins, and GameSir routing still build; play shows a core-missing message until the frameworks are linked.
+
+`CoreRegistry` registers cores automatically when those modules are present (`canImport`).
+
+## What’s in the app
+
+- Dark shelf grouped by console, search, frosted **Games | Add** dock  
+- ROM import via Files with byte-based console detection  
+- Pocket / Advance on-screen shells (no console trademarks)  
+- Soft-pad hits + `GameController` GameSir polling  
+- On-disk SRAM and save states under Documents  
+- Cover snapshots after play  
+- In-app Licenses (AGPL + engine attribution)
+
+## License & legal
+
+Application code ships under **AGPL-3.0** when DeltaCore and the system cores are linked. Do not distribute commercial ROMs. Bring your own legally obtained backups — the app does not download games.

@@ -2,47 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Press Start</title>
+  <meta name="description" content="Press Start — a native iPhone shelf for the Game Boy, GBA, NES, SNES, and Mega Drive games you own.">
   <meta name="theme-color" content="#000000">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Retro">
-  <title>Retro</title>
-  <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="favicon.svg">
-  <link rel="stylesheet" href="css/app.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f4f5;
+      --muted: #8e8e93;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(120% 80% at 50% 0%, #1a0f18 0%, #000 55%);
+      display: grid;
+      place-items: center;
+      padding: 32px 20px 48px;
+    }
+    main {
+      width: min(520px, 100%);
+      text-align: center;
+    }
+    .brand {
+      margin: 0;
+      letter-spacing: 0.28em;
+      font-weight: 800;
+      font-size: clamp(1.4rem, 4vw, 1.8rem);
+    }
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(1.8rem, 6vw, 2.6rem);
+      line-height: 1.1;
+      font-weight: 750;
+    }
+    p {
+      margin: 0 auto 28px;
+      max-width: 38ch;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff4d9a, #ff8a3d);
+    }
+    .note {
+      margin-top: 22px;
+      font-size: 0.85rem;
+      color: #6b6b70;
+    }
+    a.secondary {
+      color: #d4d4d8;
+    }
+  </style>
 </head>
-<body class="library">
-  <header class="top">
-    <div class="brand">
-      <h1>RETRO</h1>
-    </div>
-    <label class="search">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <input id="search" type="search" placeholder="Search games" enterkeyhint="search">
-    </label>
-  </header>
-  <main id="list" class="groups"></main>
-  <p id="empty" class="empty" hidden>Nothing here yet. Tap Add and choose a ROM, or drop files into a console folder.</p>
-  <div id="picker" class="sheet" hidden>
-    <div class="sheet-card">
-      <p><span id="picker-lead">Could not tell the console for</span> <strong id="picker-name"></strong></p>
-      <select id="picker-system" aria-label="Console"></select>
-      <button id="picker-go" type="button">Play</button>
-    </div>
-  </div>
-  <nav class="dock">
-    <a class="dock-item on" href="./" aria-current="page">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18l4-9 3 5 2-3 5 7H5z" fill="currentColor"/></svg>
-      Games
-    </a>
-    <label class="dock-item">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v10M7 10l5-5 5 5M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Add
-      <input id="file" class="file-input" type="file">
-    </label>
-  </nav>
-  <script type="module" src="js/library.js"></script>
+<body>
+  <main>
+    <img src="brand/press-start-logo.png" alt="Press Start" width="220" height="220" style="border-radius:28px;display:block;margin:0 auto 8px">
+    <p class="brand">PRESS START</p>
+    <h1>Your games. Full speed. On iPhone.</h1>
+    <p>A native shelf for Game Boy, GBA, NES, SNES, and Mega Drive. Import the cartridges you own. Saves stay on your phone. Built for GameSir.</p>
+    <a class="cta" href="https://apps.apple.com/">Get on the App Store</a>
+    <p class="note">The Safari player is retired. Build the native app from this repository’s <a class="secondary" href="https://github.com/nikolaikushner/PressStart">PressStart</a> folder. Source is AGPL-3 when Delta cores are linked. <a class="secondary" href="landing/privacy.html">Privacy</a> · <a class="secondary" href="landing/STORE.md">Store prep</a></p>
+  </main>
 </body>
 </html>

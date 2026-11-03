@@ -22,19 +22,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: node scripts/sync-library.mjs
-      - name: Collect site
+      - name: Collect marketing site
         run: |
-          mkdir -p _site/css _site/js _site/roms _site/vendor _site/skins
-          cp index.html play.html manifest.webmanifest favicon.svg .nojekyll _site/
-          cp css/app.css _site/css/
-          cp js/*.js _site/js/
-          cp -R roms/. _site/roms/
-          cp -R skins/. _site/skins/
-          cp -R vendor/emulatorjs _site/vendor/
+          mkdir -p _site/brand
+          cp index.html favicon.svg .nojekyll manifest.webmanifest _site/
+          cp brand/press-start-logo.png _site/brand/
+          cp -R landing _site/landing
+          cp landing/privacy.html _site/privacy.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

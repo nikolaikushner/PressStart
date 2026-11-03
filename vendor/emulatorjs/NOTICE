@@ -1,7 +1,0 @@
-EmulatorJS 4.2.3
-https://github.com/EmulatorJS/EmulatorJS
-License: GPL-3.0-or-later
-
-The files in this folder are the EmulatorJS runtime and the RetroArch cores it loads
-for Game Boy, Game Boy Color, Game Boy Advance, NES, SNES, Mega Drive, Master System
-and Game Gear. Each core keeps the license it was released under upstream.
