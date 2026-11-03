@@ -16,7 +16,9 @@
   ·
   <a href="landing/privacy.html">Privacy</a>
   ·
-  <a href="LICENSE">AGPL-3.0</a>
+  <a href="LICENSE">License</a>
+  ·
+  Paid App Store (~$1.50)
 </p>
 
 ---
@@ -66,4 +68,8 @@ open PressStart.xcodeproj
 
 ## License & legal
 
-Application code ships under **AGPL-3.0** when DeltaCore and the system cores are linked. Do not distribute commercial ROMs. Bring your own legally obtained backups — the app does not download games.
+**Press Start original code is proprietary** (All rights reserved) — not free to copy or redistribute. The official build is a **paid App Store app (~$1.50 / $1.49)**.
+
+**DeltaCore and system cores are AGPL-3.0.** Shipping them inside the app means AGPL still applies to those components and to the combined work as AGPL requires (including offering corresponding source). You cannot make the whole binary “closed forever” while linking AGPL cores unless you replace the engine or get a commercial license from the core authors.
+
+Do not distribute commercial ROMs. Users bring their own legally obtained backups — the app does not download games.

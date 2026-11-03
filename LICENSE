@@ -1,23 +1,29 @@
-GNU AFFERO GENERAL PUBLIC LICENSE
-Version 3, 19 November 2007
+Copyright (c) 2026 Nikolai Kushner. All rights reserved.
 
-Copyright (C) 2026 Press Start contributors
+Press Start application source in this repository (SwiftUI UI, library,
+import, skins wiring, and marketing site authored for Press Start) is
+proprietary software. You may not copy, modify, redistribute, or use it
+except as permitted by a separate written license from the copyright holder,
+or by downloading the official paid build from the Apple App Store.
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published
-by the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+The App Store binary is sold as a paid app. End users obtain a limited
+license to use that binary on Apple devices associated with their Apple ID,
+subject to Apple’s Licensed Application End User License Agreement and the
+App Store terms.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
+---
 
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
+IMPORTANT — emulation engines
 
-The full AGPL-3.0 text is at https://www.gnu.org/licenses/agpl-3.0.html
+If a Press Start build links DeltaCore or the GBC / GBA / NES / SNES /
+GPGX (or other) AGPL-licensed cores, those components remain under the
+GNU Affero General Public License v3.0. Their copyright holders’ terms are
+not overridden by this proprietary notice. Distributing a combined work that
+includes those AGPL components requires AGPL compliance (including offering
+corresponding source for the combined work as AGPL requires).
 
-This project links DeltaCore and system cores that are also AGPL-licensed.
-When those frameworks are included in a binary distribution, the combined
-work must be offered under AGPL-3.0 with corresponding source.
+To ship a fully closed-source App Store build with no AGPL obligations,
+Press Start must not link AGPL cores — use a differently licensed engine or
+obtain a commercial license from each core’s copyright holders.
+
+Third-party notices: see the in-app Licenses screen and Vendor/README.md.

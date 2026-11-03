@@ -4,12 +4,12 @@ struct LicensesView: View {
   var body: some View {
     List {
       Section("Press Start") {
-        Text("Press Start is offered under the GNU Affero General Public License v3. Source: github.com/nikolaikushner/retro-games")
+        Text("Press Start UI and original app code are proprietary © Nikolai Kushner. The official app is sold on the App Store. You may not redistribute the source or unofficial builds without permission.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }
-      Section("Emulation") {
-        Text("Gameplay uses DeltaCore and system cores (GBC, GBA, NES, SNES, Genesis Plus GX wrappers) by Riley Testut and contributors, also under AGPL-3.0. Press Start does not use Delta branding.")
+      Section("Emulation engines") {
+        Text("Gameplay may use DeltaCore and system cores (GBC, GBA, NES, SNES, Genesis Plus GX wrappers). Those projects are AGPL-3.0. Linking them into a build triggers AGPL source obligations for that combined work. Press Start branding is independent of Delta.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }

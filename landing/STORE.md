@@ -9,7 +9,7 @@
 | Bundle ID | `com.nikolaikushner.pressstart` |
 | Category | Games → Simulation (or Action) |
 | Age | 12+ (Infrequent/Mild Cartoon Violence; user-supplied content) |
-| Price | Free or Paid (your choice); no IAP for ROMs |
+| Price | **$1.49** (≈ $1.50) paid upfront; no IAP for ROMs |
 
 ## Privacy
 
@@ -19,7 +19,7 @@
 
 ## Review notes (paste into App Store Connect)
 
-Press Start is a local emulator shelf. Users import ROM files they already own via the system Files picker. The app does not download, sell, or host commercial game ROMs. Emulation uses open-source DeltaCore system cores. On-screen controller art does not use Nintendo trademarks. Source is AGPL-3.0 at https://github.com/nikolaikushner/retro-games
+Press Start is a paid local emulator shelf ($1.49). Users import ROM files they already own via the system Files picker. The app does not download, sell, or host commercial game ROMs. Emulation uses open-source DeltaCore system cores (AGPL). On-screen controller art does not use Nintendo trademarks. The Press Start UI is proprietary; AGPL applies to linked cores — corresponding source for AGPL components is offered at https://github.com/nikolaikushner/PressStart when those cores are shipped.
 
 ## Screenshots checklist
 
