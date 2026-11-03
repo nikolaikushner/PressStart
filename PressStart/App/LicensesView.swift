@@ -1,20 +1,30 @@
 import SwiftUI
 
 struct LicensesView: View {
+  private let sourceURL = URL(string: "https://github.com/nikolaikushner/PressStart")!
+  private let agplURL = URL(string: "https://www.gnu.org/licenses/agpl-3.0.html")!
+
   var body: some View {
     List {
       Section("Press Start") {
-        Text("Press Start UI and original app code are proprietary © Nikolai Kushner. The official app is sold on the App Store. You may not redistribute the source or unofficial builds without permission.")
+        Text("Press Start is free software under the GNU Affero General Public License v3.0 (AGPL-3.0). The official app may be sold on the App Store; corresponding source is always available on GitHub.")
           .font(.footnote)
           .foregroundStyle(.secondary)
+        Link("Source on GitHub", destination: sourceURL)
+        Link("AGPL-3.0 license text", destination: agplURL)
       }
-      Section("Emulation engines") {
-        Text("Gameplay may use DeltaCore and system cores (GBC, GBA, NES, SNES, Genesis Plus GX wrappers). Those projects are AGPL-3.0. Linking them into a build triggers AGPL source obligations for that combined work. Press Start branding is independent of Delta.")
+      Section("Emulation") {
+        Text("Gameplay uses DeltaCore and system cores (GBC, GBA, NES, SNES, Genesis Plus GX wrappers) by Riley Testut and contributors, also under AGPL-3.0. Press Start does not use Delta branding.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }
       Section("Skins") {
         Text("On-screen shells are adapted community controller layouts. Console trademarks are not claimed.")
+          .font(.footnote)
+          .foregroundStyle(.secondary)
+      }
+      Section("ROMs") {
+        Text("Bring your own legally obtained backups. Press Start does not download or sell game ROMs.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }

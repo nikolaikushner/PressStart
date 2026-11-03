@@ -16,9 +16,11 @@
   ·
   <a href="landing/privacy.html">Privacy</a>
   ·
-  <a href="LICENSE">License</a>
+  <a href="LICENSE">AGPL-3.0</a>
   ·
-  Paid App Store (~$1.50)
+  <a href="SOURCE.md">Corresponding source</a>
+  ·
+  Paid App Store ($1.49)
 </p>
 
 ---
@@ -28,11 +30,13 @@
 | **Brand** | Press Start |
 | **Bundle ID** | `com.nikolaikushner.pressstart` |
 | **Subtitle** | `Retro Emulator · GB GBA NES SNES` |
+| **Price** | **$1.49** on the App Store |
 | **Systems** | GB · GBC · GBA · NES · SNES · Mega Drive |
 | **UI** | SwiftUI shelf (not Delta branding) |
 | **Engine** | [DeltaCore](https://github.com/rileytestut/DeltaCore) + system cores |
+| **License** | [AGPL-3.0](LICENSE) |
 
-The Safari / EmulatorJS player is retired. This repository is the **native app** plus a small marketing site for GitHub Pages.
+This public repository is the **corresponding source** for App Store builds ([SOURCE.md](SOURCE.md)). The Safari / EmulatorJS player is retired; GitHub Pages is marketing only.
 
 ## Build
 
@@ -61,15 +65,13 @@ open PressStart.xcodeproj
 - Dark shelf grouped by console, search, frosted **Games | Add** dock  
 - ROM import via Files with byte-based console detection  
 - Pocket / Advance on-screen shells (no console trademarks)  
-- Soft-pad hits + Apple `GameController` support for Bluetooth / USB gamepads
+- Soft-pad hits + Apple `GameController` support for Bluetooth / USB gamepads  
 - On-disk SRAM and save states under Documents  
 - Cover snapshots after play  
-- In-app Licenses (AGPL + engine attribution)
+- In-app Licenses with GitHub source link (AGPL)
 
 ## License & legal
 
-**Press Start original code is proprietary** (All rights reserved) — not free to copy or redistribute. The official build is a **paid App Store app (~$1.50 / $1.49)**.
-
-**DeltaCore and system cores are AGPL-3.0.** Shipping them inside the app means AGPL still applies to those components and to the combined work as AGPL requires (including offering corresponding source). You cannot make the whole binary “closed forever” while linking AGPL cores unless you replace the engine or get a commercial license from the core authors.
+Press Start is **AGPL-3.0**. You may sell copies (App Store **$1.49**); you must keep corresponding source available. See [NOTICE](NOTICE) and [SOURCE.md](SOURCE.md).
 
 Do not distribute commercial ROMs. Users bring their own legally obtained backups — the app does not download games.

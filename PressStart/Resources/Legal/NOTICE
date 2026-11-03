@@ -1,0 +1,26 @@
+Press Start
+Copyright (c) 2026 Nikolai Kushner and contributors
+
+This program is free software under the GNU Affero General Public License
+v3.0 (AGPL-3.0). See the file LICENSE for the full terms.
+
+Corresponding source for App Store builds of Press Start (including how
+DeltaCore and system cores are integrated) is offered at:
+
+  https://github.com/nikolaikushner/PressStart
+
+The official binary may be sold on the Apple App Store. AGPL permits
+charging for copies; it still requires providing corresponding source.
+
+Third-party components (when linked):
+
+  - DeltaCore — https://github.com/rileytestut/DeltaCore — AGPL-3.0
+  - GBCDeltaCore — https://github.com/rileytestut/GBCDeltaCore — AGPL-3.0
+  - GBADeltaCore — https://github.com/rileytestut/GBADeltaCore — AGPL-3.0
+  - NESDeltaCore — https://github.com/rileytestut/NESDeltaCore — AGPL-3.0
+  - SNESDeltaCore — https://github.com/rileytestut/SNESDeltaCore — AGPL-3.0
+  - GPGXDeltaCore — https://github.com/rileytestut/GPGXDeltaCore — AGPL-3.0
+
+Press Start does not use Delta branding. Users must supply their own
+legally obtained ROM backups; this project does not distribute commercial
+game ROMs.
