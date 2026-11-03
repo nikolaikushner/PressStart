@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="brand/press-start-logo.png" alt="Press Start" width="280">
+  <img src="brand/press-start-icon.png" alt="Press Start" width="180" style="border-radius:22%">
 </p>
 
 <h1 align="center">Press Start</h1>

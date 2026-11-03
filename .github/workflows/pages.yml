@@ -26,7 +26,8 @@ jobs:
         run: |
           mkdir -p _site/brand
           cp index.html favicon.svg .nojekyll manifest.webmanifest _site/
-          cp brand/press-start-logo.png _site/brand/
+          cp brand/press-start-icon.png _site/brand/
+          cp brand/press-start-logo.png _site/brand/ 2>/dev/null || true
           cp -R landing _site/landing
           cp landing/privacy.html _site/privacy.html
       - uses: actions/upload-pages-artifact@v3
