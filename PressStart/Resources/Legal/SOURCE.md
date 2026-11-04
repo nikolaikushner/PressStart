@@ -16,4 +16,4 @@ Follow [README.md](README.md): install XcodeGen, run `PressStart/scripts/bootstr
 
 ## Paid App Store
 
-The official app may be sold (target price **$1.49**). AGPL allows selling the program; it does not allow withholding corresponding source from recipients of the binary.
+The official app may be sold. AGPL allows selling the program; it does not allow withholding corresponding source from recipients of the binary.
