@@ -63,7 +63,7 @@ open PressStart.xcodeproj
 
 4. Signing uses the Apple team signed into Xcode (`S37Z4QU5FT`, Mikalai Kushner). Run on an iPhone or simulator.
 
-5. App icon follows the Game Boy photo: light-grey shell, near-black D-pad, magenta face buttons, larger light-grey Select/Start pills tilted with the right end up. The pocket shell is that photo (`PressStart/Resources/Skins/pocket.png`); the game is drawn into its screen. Open `PressStart/AppIcon.icon` in **Icon Composer** (Xcode 26+) — only the face buttons are Liquid Glass; the D-pad and pills stay matte. Rebuild the icon with `PressStart/scripts/generate-app-icon.py`. `generate-skins.py` rebuilds the Advance shell only.
+5. App icon follows the hand-drawn layout: light-grey shell, near-black D-pad, deep-magenta face buttons, dark-grey Select/Start pills. The in-app shells are original art and do not use console names. Open `PressStart/AppIcon.icon` in **Icon Composer** (Xcode 26+) — only the face buttons are Liquid Glass; the D-pad and pills stay matte. Rebuild the icon with `PressStart/scripts/generate-app-icon.py` and the shells with `PressStart/scripts/generate-skins.py`.
 
 `CoreRegistry` registers a core when its framework is linked (`canImport`). Game Boy, GBA, NES, SNES, and Mega Drive then play through DeltaCore’s Metal renderer. The shelf draws its own shell; Delta’s on-screen controller stays hidden.
 

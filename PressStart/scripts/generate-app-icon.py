@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-"""Generate the Press Start app icon from the Game Boy reference photo.
+"""Generate the Press Start app icon from the hand-drawn layout.
 
-Shell, D-pad, and face buttons use colors sampled from that photo. Select and
-Start are the larger light-grey pills, tilted so the right end sits higher.
+Light-grey shell, a near-black D-pad, two deep-magenta face buttons, and
+dark-grey Select/Start pills tilted like the sketch (right end higher).
 The face buttons are the only Liquid Glass layers. The D-pad and pills stay
 matte so Icon Composer does not turn them into glass.
-
-Brand PNGs, the asset-catalog fallback, and PressStart/AppIcon.icon all come
-from this script. The pocket shell is the photo itself.
 """
 
 from __future__ import annotations
@@ -25,31 +22,30 @@ APPICONSET = PRESS / "Resources" / "Assets.xcassets" / "AppIcon.appiconset"
 ICON_PKG = PRESS / "AppIcon.icon"
 ASSETS = ICON_PKG / "Assets"
 
-# Sampled from the Game Boy photo: shell face, button body, blue-black cross.
-BODY = (196, 195, 191, 255)  # #C4C3BF
-FACE = (140, 22, 78, 255)  # #8C164E
-FACE_HI = (210, 70, 130, 255)
-DPAD = (32, 34, 42, 255)  # near-black, a cool hair lighter
-DPAD_HI = (54, 56, 66, 255)
-DPAD_LO = (14, 16, 22, 255)
-PILL = (148, 146, 144, 255)  # light grey recess, not black
-PILL_HI = (196, 194, 190, 255)
+# Gamepad colors. The sketch fixes placement, not a new palette.
+BODY = (214, 212, 208, 255)  # #D6D4D0 shell
+FACE = (122, 28, 64, 255)  # #7A1C40 face buttons
+FACE_HI = (158, 48, 92, 255)
+DPAD = (38, 36, 34, 255)  # near-black, a hair lighter
+DPAD_HI = (58, 56, 54, 255)
+DPAD_LO = (18, 16, 14, 255)
+PILL = (98, 96, 94, 255)  # dark grey, not black
+PILL_HI = (128, 126, 124, 255)
 SIZE = 1024
 
-# Control cluster from the photo, kept in proportion and centered on the square.
-# Select/Start are larger than the old slivers and tilt the other way (right end up).
-DPAD_C = (0.197, 0.428)
-DPAD_ARM = 0.127
-DPAD_THICK_RATIO = 0.80
-B_BUTTON = (0.705, 0.456)
-A_BUTTON = (0.870, 0.379)
-BUTTON_R = 0.060
-PILL_L = (0.354, 0.658)
-PILL_R = (0.534, 0.657)
-PILL_W = 0.150
-PILL_H = 0.046
-# PIL rotates counter-clockwise. Positive lifts the right end.
-PILL_ANGLE = 24.0
+# Measured on the sketch's grey plate.
+DPAD_C = (0.274, 0.398)
+DPAD_ARM = 0.190
+DPAD_THICK_RATIO = 0.78
+B_BUTTON = (0.618, 0.463)
+A_BUTTON = (0.797, 0.285)
+BUTTON_R = 0.098
+PILL_L = (0.400, 0.783)
+PILL_R = (0.589, 0.788)
+PILL_W = 0.145
+PILL_H = 0.050
+# PIL rotates counter-clockwise. Positive lifts the right end, as in the sketch.
+PILL_ANGLE = 50.0
 
 
 def srgb(color: tuple[int, int, int, int]) -> str:
@@ -125,7 +121,7 @@ def dpad_box() -> tuple[float, float, float, float]:
 
 
 def draw_dpad(canvas: Image.Image, *, molded: bool) -> None:
-    """Chunky Game Boy cross: broad arms, rounded ends, center dish."""
+    """Chunky cross: broad arms, rounded ends, center dish."""
     cx, cy, arm, thick = dpad_box()
     radius = thick * 0.24
     if molded:

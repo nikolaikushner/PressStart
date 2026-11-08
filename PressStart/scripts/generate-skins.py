@@ -191,12 +191,7 @@ def paint_body(size: tuple[int, int], *, pocket: bool) -> Image.Image:
     d = ImageDraw.Draw(img)
 
     if pocket:
-        d.line([(48, 28), (200, 28)], fill=(168, 64, 72, 255), width=2)
-        d.line([(48, 32), (200, 32)], fill=(64, 84, 150, 255), width=2)
-        d.line([(440, 28), (592, 28)], fill=(168, 64, 72, 255), width=2)
-        d.line([(440, 32), (592, 32)], fill=(64, 84, 150, 255), width=2)
-        d.text((w / 2, 30), "DOT MATRIX WITH STEREO SOUND", font=font(11), fill=LABEL, anchor="mm")
-        d.text((w / 2, 58), "PRESS START", font=font(22), fill=LABEL, anchor="mm")
+        d.text((w / 2, 44), "PRESS START", font=font(22), fill=LABEL, anchor="mm")
         for i in range(6):
             x0 = w * 0.78 + i * 10
             y0 = h * 0.72
@@ -275,11 +270,11 @@ def generate_advance() -> Image.Image:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    # pocket.png is the supplied Game Boy photograph. pocket.json is measured
-    # from that photo, including the LCD rect the game is drawn into.
+    pocket = generate_pocket()
     advance = generate_advance()
+    pocket.save(OUT / "pocket.png")
     advance.save(OUT / "advance.png")
-    print(f"left {OUT / 'pocket.png'} (photo skin)")
+    print(f"wrote {OUT / 'pocket.png'} {pocket.size}")
     print(f"wrote {OUT / 'advance.png'} {advance.size}")
 
 

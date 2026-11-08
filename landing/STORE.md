@@ -45,7 +45,7 @@ Simulator captures are in `landing/screenshots/`:
 3. `shelf-6.9.png` (1320×2868) and `shelf-6.3.png` (1206×2622) — shelf with original covers for GB, GBA, NES, SNES, and Mega Drive
 4. `licenses-6.9.png` (1320×2868) and `licenses-6.3.png` (1206×2622) — Licenses, including the GitHub source link
 
-Portrait sizes match App Store Connect’s 6.9" and 6.3" iPhone slots. Covers in those shots are original art, not commercial box art. App icon: light-grey shell, near-black D-pad, two magenta face buttons, larger light-grey Select/Start pills (`brand/press-start-icon.png`). The pocket shell in the app is the Game Boy photograph. For Liquid Glass on device, open `PressStart/AppIcon.icon` in Icon Composer (Xcode 26+) — only the face buttons are glass; the D-pad and pills stay matte.
+Portrait sizes match App Store Connect’s 6.9" and 6.3" iPhone slots. Covers in those shots are original art, not commercial box art. App icon: light-grey shell, near-black D-pad, two deep-magenta face buttons, dark-grey Select/Start pills (`brand/press-start-icon.png`). In-app shells are original art with no console names. For Liquid Glass on device, open `PressStart/AppIcon.icon` in Icon Composer (Xcode 26+) — only the face buttons are glass; the D-pad and pills stay matte.
 
 ## TestFlight
 

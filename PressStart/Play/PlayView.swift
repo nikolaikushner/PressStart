@@ -19,13 +19,9 @@ struct PlayView: View {
   var body: some View {
     ZStack {
       Color.black.ignoresSafeArea()
-      if layout.screen != nil {
-        handheld
-      } else {
-        VStack(spacing: 0) {
-          screen
-          shell
-        }
+      VStack(spacing: 0) {
+        screen
+        shell
       }
     }
     .statusBarHidden(true)
@@ -60,74 +56,18 @@ struct PlayView: View {
     }
   }
 
-  /// Full handheld photo: the game is inset into the LCD, hits sit on the controls.
-  private var handheld: some View {
-    GeometryReader { geo in
-      let picture = skinImage
-      let pictureAspect = (picture?.size.width ?? 1) / (picture?.size.height ?? 1)
-      let fittedW = min(geo.size.width, geo.size.height * pictureAspect)
-      let fittedH = fittedW / pictureAspect
-      let originX = (geo.size.width - fittedW) / 2
-      let originY = (geo.size.height - fittedH) / 2
-      ZStack {
-        if let picture {
-          Image(uiImage: picture)
-            .resizable()
-            .frame(width: fittedW, height: fittedH)
-            .position(x: originX + fittedW / 2, y: originY + fittedH / 2)
-        }
-        if let hole = layout.screen {
-          let box = CGRect(
-            x: originX + hole.x * fittedW,
-            y: originY + hole.y * fittedH,
-            width: hole.w * fittedW,
-            height: hole.h * fittedH
-          )
-          let gameW = min(box.width, box.height * aspect.w / aspect.h)
-          let gameH = gameW * aspect.h / aspect.w
-          gameSurface
-            .frame(width: gameW, height: gameH)
-            .position(x: box.midX, y: box.midY)
-        }
-        ForEach(layout.buttons) { button in
-          let rect = CGRect(
-            x: originX + button.x * fittedW,
-            y: originY + button.y * fittedH,
-            width: button.w * fittedW,
-            height: button.h * fittedH
-          )
-          SkinHit(button: button.btn) { pressed in
-            handleHit(button.btn, pressed: pressed)
-          }
-          .frame(width: rect.width, height: rect.height)
-          .position(x: rect.midX, y: rect.midY)
-        }
-      }
-    }
-    .ignoresSafeArea()
-  }
-
-  private var gameSurface: some View {
-    ZStack {
-      Color(white: 0.03)
-      if let controller = session.controller {
-        GameHost(controller: controller)
-          .clipShape(Rectangle())
-      }
-    }
-  }
-
-  private var skinImage: UIImage? {
-    UIImage(named: layout.imageName, in: .main, compatibleWith: nil)
-      ?? UIImage(contentsOfFile: Bundle.main.path(forResource: layout.imageName, ofType: "png", inDirectory: "Skins") ?? "")
-  }
-
   private var screen: some View {
     GeometryReader { geo in
       let ratio = aspect
       let width = min(geo.size.width, geo.size.height * ratio.w / ratio.h)
       let height = width * ratio.h / ratio.w
-      gameSurface
+      ZStack {
+        Color(white: 0.03)
+        if let controller = session.controller {
+          GameHost(controller: controller)
+            .clipShape(Rectangle())
+        }
+      }
       .frame(width: width, height: height)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
@@ -136,7 +76,8 @@ struct PlayView: View {
 
   private var shell: some View {
     ZStack {
-      if let uiImage = skinImage {
+      if let uiImage = UIImage(named: layout.imageName, in: .main, compatibleWith: nil)
+        ?? UIImage(contentsOfFile: Bundle.main.path(forResource: layout.imageName, ofType: "png", inDirectory: "Skins") ?? "") {
         Image(uiImage: uiImage)
           .resizable()
           .scaledToFit()
