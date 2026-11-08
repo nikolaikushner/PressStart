@@ -2,8 +2,8 @@
 """Generate Press Start on-screen shells in GameSir reference colors.
 
 Palette sampled from the physical GameSir controller photo:
-  shell light grey, matte black D-pad, deep magenta face buttons,
-  charcoal utility / shoulder controls, dark navy labels.
+  shell light grey, near-black D-pad (only a hair lighter than black),
+  deep magenta face buttons, dark-grey utility controls, dark navy labels.
 """
 
 from __future__ import annotations
@@ -23,11 +23,11 @@ BODY_EDGE = (156, 154, 150, 255)
 MAGENTA = (122, 28, 64, 255)       # ~#7A1C40 from photo median, nudged for UI
 MAGENTA_HI = (158, 48, 92, 255)
 MAGENTA_LO = (86, 16, 44, 255)
-DPAD = (20, 18, 16, 255)
-DPAD_HI = (52, 50, 48, 255)
-DPAD_LO = (6, 6, 6, 255)
-UTILITY = (72, 70, 68, 255)
-UTILITY_HI = (108, 106, 104, 255)
+DPAD = (38, 36, 34, 255)          # near-black, a hair lighter than black
+DPAD_HI = (58, 56, 54, 255)
+DPAD_LO = (18, 16, 14, 255)
+UTILITY = (98, 96, 94, 255)       # dark grey, not black
+UTILITY_HI = (128, 126, 124, 255)
 SHOULDER = (88, 86, 84, 255)
 SHOULDER_HI = (118, 116, 114, 255)
 LABEL = (26, 28, 46, 255)

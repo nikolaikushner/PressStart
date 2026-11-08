@@ -8,7 +8,31 @@
   ],
   "groups": [
     {
-      "name": "Buttons",
+      "name": "Matte controls",
+      "specular": false,
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.18
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      },
+      "layers": [
+        {
+          "name": "D-pad",
+          "image-name": "01-dpad.svg",
+          "glass": false
+        },
+        {
+          "name": "Select and Start",
+          "image-name": "04-pills.svg",
+          "glass": false
+        }
+      ]
+    },
+    {
+      "name": "Face buttons",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "outside",
@@ -29,32 +53,13 @@
       "layers": [
         {
           "name": "B button",
-          "image-name": "01-b-button.svg",
+          "image-name": "02-b-button.svg",
           "glass": true
         },
         {
           "name": "A button",
-          "image-name": "02-a-button.svg",
+          "image-name": "03-a-button.svg",
           "glass": true
-        }
-      ]
-    },
-    {
-      "name": "Letters",
-      "specular": false,
-      "shadow": {
-        "kind": "none",
-        "opacity": 0
-      },
-      "translucency": {
-        "enabled": false,
-        "value": 0
-      },
-      "layers": [
-        {
-          "name": "B and A",
-          "image-name": "03-letters.png",
-          "glass": false
         }
       ]
     }

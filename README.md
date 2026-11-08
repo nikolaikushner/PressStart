@@ -63,7 +63,7 @@ open PressStart.xcodeproj
 
 4. Signing uses the Apple team signed into Xcode (`S37Z4QU5FT`, Mikalai Kushner). Run on an iPhone or simulator.
 
-5. App icon: two magenta B / A buttons on a light-grey plate. Open `PressStart/AppIcon.icon` in **Icon Composer** (Xcode 26+) — the buttons are Liquid Glass (specular, translucency, refraction) and the heavier B / A letters stay solid black. Rebuild with `PressStart/scripts/generate-app-icon.py` if you change the mark.
+5. App icon and the in-app shells share the GameSir palette: light-grey shell, near-black D-pad, deep-magenta face buttons, dark-grey Select/Start. Open `PressStart/AppIcon.icon` in **Icon Composer** (Xcode 26+) — only the face buttons are Liquid Glass; the D-pad and pills stay matte. Rebuild the icon with `PressStart/scripts/generate-app-icon.py` and the shells with `PressStart/scripts/generate-skins.py`.
 
 `CoreRegistry` registers a core when its framework is linked (`canImport`). Game Boy, GBA, NES, SNES, and Mega Drive then play through DeltaCore’s Metal renderer. The shelf draws its own shell; Delta’s on-screen controller stays hidden.
 

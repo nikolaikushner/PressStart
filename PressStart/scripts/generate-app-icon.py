@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
-"""Generate the Press Start app icon.
+"""Generate the Press Start app icon as the on-screen gamepad.
 
-Layout follows the B / A reference: two equal face buttons on the GameSir
-shell grey, B under the lower-left button and A under the upper-right one.
-Button and label colors match generate-skins.py.
-Letters are a step heavier than a regular bold.
+Light-grey GameSir shell, a near-black D-pad (only a hair lighter than
+black), two deep-magenta face buttons, and dark-grey Select/Start pills.
+The face buttons are the only Liquid Glass layers. The D-pad and pills stay
+matte so Icon Composer does not turn them into glass.
 
-Icon Composer layers stay flat. Xcode 26 applies Liquid Glass (specular,
-translucency, refraction) to the button layers. The letters are a separate
-non-glass layer so they stay solid black. Brand PNGs and the asset-catalog
-fallback include a glass preview, because those files are what you see
-without Icon Composer.
+Brand PNGs, the asset-catalog fallback, and PressStart/AppIcon.icon all come
+from this script. The in-app shells are generated separately by
+generate-skins.py with the same palette.
 """
 
 from __future__ import annotations
@@ -19,7 +17,7 @@ import json
 import math
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[2]
 PRESS = ROOT / "PressStart"
@@ -28,21 +26,27 @@ APPICONSET = PRESS / "Resources" / "Assets.xcassets" / "AppIcon.appiconset"
 ICON_PKG = PRESS / "AppIcon.icon"
 ASSETS = ICON_PKG / "Assets"
 
-# Same GameSir palette as the on-screen shells in generate-skins.py.
+# Same GameSir palette as generate-skins.py.
 BODY = (214, 212, 208, 255)  # #D6D4D0 shell
 FACE = (122, 28, 64, 255)  # #7A1C40 face buttons
 FACE_HI = (158, 48, 92, 255)
-INK = (26, 28, 46, 255)  # navy labels
+DPAD = (38, 36, 34, 255)  # near-black, a hair lighter
+PILL = (98, 96, 94, 255)  # dark grey, clearly not black
+PILL_HI = (128, 126, 124, 255)
 SIZE = 1024
-FONT = "/usr/share/fonts/opentype/cantarell/Cantarell-ExtraBold.otf"
 
-# Normalized centers on the reference plate (0–1).
-B_BUTTON = (0.3118, 0.4643)
-A_BUTTON = (0.6874, 0.3030)
-BUTTON_R = 0.1444
-B_LETTER = (0.3094, 0.7115)
-A_LETTER = (0.6865, 0.5737)
-LETTER_H = 0.1030
+# Normalized to the reference sketch.
+DPAD_C = (0.283, 0.399)
+DPAD_ARM = 0.168
+DPAD_THICK = 0.058
+B_BUTTON = (0.631, 0.462)
+A_BUTTON = (0.803, 0.293)
+BUTTON_R = 0.090
+PILL_L = (0.420, 0.748)
+PILL_R = (0.611, 0.746)
+PILL_W = 0.078
+PILL_H = 0.030
+PILL_ANGLE = -18.0
 
 
 def srgb(color: tuple[int, int, int, int]) -> str:
@@ -54,8 +58,13 @@ def pt(pair: tuple[float, float]) -> tuple[float, float]:
     return pair[0] * SIZE, pair[1] * SIZE
 
 
+def hex_rgb(color: tuple[int, int, int, int]) -> str:
+    r, g, b, _ = color
+    return f"#{r:02X}{g:02X}{b:02X}"
+
+
 def glass_disc(radius: float, albedo: tuple[int, int, int, int]) -> Image.Image:
-    """Flat Liquid Glass puck for preview PNGs. Icon Composer layers stay unshaded."""
+    """Flat glass puck for preview PNGs. Icon Composer layers stay unshaded."""
     r = radius
     pad = int(r * 0.45) + 4
     d = int(math.ceil(r * 2 + pad * 2))
@@ -73,17 +82,17 @@ def glass_disc(radius: float, albedo: tuple[int, int, int, int]) -> Image.Image:
             coverage = 1.0 if dist <= r - 0.6 else max(0.0, (r + 0.8 - dist) / 1.4)
             nx, ny = dx / r, dy / r
             edge = dist / r
-            # Lift toward the GameSir highlight, not toward white.
             sheen = math.exp(-((ny + 0.72) ** 2) / 0.012) * math.exp(-(nx ** 2) / 0.22)
             rim = max(0.0, (edge - 0.90) / 0.10)
             rim_light = rim * (0.15 + 0.85 * max(0.0, -ny))
             mix = min(1.0, 0.55 * sheen + 0.70 * rim_light)
             shade = 0.96 - 0.10 * max(0.0, ny)
-            cr = min(255.0, ar * shade * (1.0 - mix) + FACE_HI[0] * mix)
-            cg = min(255.0, ag * shade * (1.0 - mix) + FACE_HI[1] * mix)
-            cb = min(255.0, ab * shade * (1.0 - mix) + FACE_HI[2] * mix)
-            alpha = int(255 * coverage * 0.96)
-            px[x, y] = (int(cr), int(cg), int(cb), alpha)
+            px[x, y] = (
+                int(min(255.0, ar * shade * (1.0 - mix) + FACE_HI[0] * mix)),
+                int(min(255.0, ag * shade * (1.0 - mix) + FACE_HI[1] * mix)),
+                int(min(255.0, ab * shade * (1.0 - mix) + FACE_HI[2] * mix)),
+                int(255 * coverage * 0.96),
+            )
     return img
 
 
@@ -97,46 +106,51 @@ def paste_center(base: Image.Image, sprite: Image.Image, cx: float, cy: float) -
 def contact_shadow(canvas: Image.Image, cx: float, cy: float, radius: float) -> None:
     layer = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
-    rx, ry = radius * 0.92, radius * 0.28
+    rx, ry = radius * 0.92, radius * 0.22
     draw.ellipse(
-        [cx - rx, cy + radius * 0.72 - ry, cx + rx, cy + radius * 0.72 + ry],
-        fill=(0, 0, 0, 46),
+        [cx - rx, cy + radius * 0.55 - ry, cx + rx, cy + radius * 0.55 + ry],
+        fill=(0, 0, 0, 40),
     )
-    layer = layer.filter(ImageFilter.GaussianBlur(radius=radius * 0.22))
-    canvas.alpha_composite(layer)
+    canvas.alpha_composite(layer.filter(ImageFilter.GaussianBlur(radius=radius * 0.18)))
 
 
-def letter_mask(char: str, height: int) -> Image.Image:
-    """ExtraBold glyph, then a small dilation so the stroke is a bit heavier."""
-    font = ImageFont.truetype(FONT, 640)
-    scratch = Image.new("L", (800, 800), 0)
-    ImageDraw.Draw(scratch).text((40, 40), char, font=font, fill=255)
-    bbox = scratch.getbbox()
-    if bbox is None:
-        raise RuntimeError(f"font produced no glyph for {char!r}")
-    glyph = scratch.crop(bbox)
-    scale = height / glyph.size[1]
-    resized = glyph.resize(
-        (max(1, int(round(glyph.size[0] * scale))), height),
-        Image.Resampling.LANCZOS,
-    )
-    # Three 1px dilations: ExtraBold, then a little heavier than the reference letters.
-    fat = resized
-    for _ in range(3):
-        fat = fat.filter(ImageFilter.MaxFilter(3))
-    return fat
+def draw_dpad(canvas: Image.Image, color: tuple[int, int, int, int]) -> None:
+    cx, cy = pt(DPAD_C)
+    arm = DPAD_ARM * SIZE
+    thick = DPAD_THICK * SIZE
+    radius = thick * 0.42
+    draw = ImageDraw.Draw(canvas)
+    draw.rounded_rectangle([cx - thick / 2, cy - arm, cx + thick / 2, cy + arm], radius=radius, fill=color)
+    draw.rounded_rectangle([cx - arm, cy - thick / 2, cx + arm, cy + thick / 2], radius=radius, fill=color)
 
 
-def paste_letter(canvas: Image.Image, char: str, center: tuple[float, float], height: float) -> None:
-    mask = letter_mask(char, max(1, int(round(height))))
-    sprite = Image.new("RGBA", mask.size, (0, 0, 0, 0))
-    ink = Image.new("RGBA", mask.size, INK)
-    sprite.paste(ink, mask=mask)
-    paste_center(canvas, sprite, *center)
+def draw_pill(
+    canvas: Image.Image,
+    center: tuple[float, float],
+    color: tuple[int, int, int, int],
+    highlight: tuple[int, int, int, int] | None = None,
+) -> None:
+    cx, cy = pt(center)
+    w, h = PILL_W * SIZE, PILL_H * SIZE
+    pad = 6
+    tile = Image.new("RGBA", (int(w) + pad * 2, int(h) + pad * 2), (0, 0, 0, 0))
+    td = ImageDraw.Draw(tile)
+    td.rounded_rectangle([pad, pad, pad + w, pad + h], radius=h / 2, fill=color)
+    if highlight is not None:
+        td.rounded_rectangle(
+            [pad + 2, pad + 1, pad + w - 2, pad + h * 0.46],
+            radius=h * 0.35,
+            fill=highlight,
+        )
+    rot = tile.rotate(PILL_ANGLE, resample=Image.Resampling.BICUBIC, expand=True)
+    paste_center(canvas, rot, cx, cy)
 
 
 def draw_icon(preview_glass: bool) -> Image.Image:
     img = Image.new("RGBA", (SIZE, SIZE), BODY)
+    draw_dpad(img, DPAD)
+    draw_pill(img, PILL_L, PILL, PILL_HI if preview_glass else None)
+    draw_pill(img, PILL_R, PILL, PILL_HI if preview_glass else None)
     bcx, bcy = pt(B_BUTTON)
     acx, acy = pt(A_BUTTON)
     radius = BUTTON_R * SIZE
@@ -150,9 +164,6 @@ def draw_icon(preview_glass: bool) -> Image.Image:
         draw = ImageDraw.Draw(img)
         for cx, cy in ((bcx, bcy), (acx, acy)):
             draw.ellipse([cx - radius, cy - radius, cx + radius, cy + radius], fill=FACE)
-    cap = LETTER_H * SIZE
-    paste_letter(img, "B", pt(B_LETTER), cap)
-    paste_letter(img, "A", pt(A_LETTER), cap)
     return img
 
 
@@ -166,63 +177,90 @@ def ios_squircle_mask(size: int = SIZE) -> Image.Image:
     return mask
 
 
-def flat_circle_layer(cx: float, cy: float, radius: float) -> Image.Image:
-    layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
-    ImageDraw.Draw(layer).ellipse(
-        [cx - radius, cy - radius, cx + radius, cy + radius],
-        fill=FACE,
-    )
-    return layer
-
-
-def letters_layer() -> Image.Image:
-    layer = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
-    cap = LETTER_H * SIZE
-    paste_letter(layer, "B", pt(B_LETTER), cap)
-    paste_letter(layer, "A", pt(A_LETTER), cap)
-    return layer
-
-
-def write_svg_circle(path: Path, cx: float, cy: float, radius: float) -> None:
-    r, g, b, _ = FACE
-    path.write_text(
-        f"""<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="#{r:02X}{g:02X}{b:02X}"/>
-</svg>
-"""
+def svg_doc(body: str) -> str:
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">\n'
+        f"{body}</svg>\n"
     )
 
 
 def write_layers() -> None:
     ASSETS.mkdir(parents=True, exist_ok=True)
-    for stale in (
-        "01-select-pill.svg",
-        "01-select-pill.png",
-        "02-action-circle.svg",
-        "02-action-circle.png",
-    ):
-        target = ASSETS / stale
-        if target.exists():
-            target.unlink()
+    for stale in ASSETS.iterdir():
+        if stale.is_file():
+            stale.unlink()
+
+    cx, cy = pt(DPAD_C)
+    arm = DPAD_ARM * SIZE
+    thick = DPAD_THICK * SIZE
+    radius = thick * 0.42
+    dpad = svg_doc(
+        f'  <rect x="{cx - thick / 2:.2f}" y="{cy - arm:.2f}" width="{thick:.2f}" height="{arm * 2:.2f}" rx="{radius:.2f}" fill="{hex_rgb(DPAD)}"/>\n'
+        f'  <rect x="{cx - arm:.2f}" y="{cy - thick / 2:.2f}" width="{arm * 2:.2f}" height="{thick:.2f}" rx="{radius:.2f}" fill="{hex_rgb(DPAD)}"/>\n'
+    )
+    (ASSETS / "01-dpad.svg").write_text(dpad)
 
     bcx, bcy = pt(B_BUTTON)
     acx, acy = pt(A_BUTTON)
-    radius = BUTTON_R * SIZE
-    write_svg_circle(ASSETS / "01-b-button.svg", bcx, bcy, radius)
-    write_svg_circle(ASSETS / "02-a-button.svg", acx, acy, radius)
-    flat_circle_layer(bcx, bcy, radius).save(ASSETS / "01-b-button.png")
-    flat_circle_layer(acx, acy, radius).save(ASSETS / "02-a-button.png")
-    letters_layer().save(ASSETS / "03-letters.png")
+    br = BUTTON_R * SIZE
+    (ASSETS / "02-b-button.svg").write_text(
+        svg_doc(f'  <circle cx="{bcx:.2f}" cy="{bcy:.2f}" r="{br:.2f}" fill="{hex_rgb(FACE)}"/>\n')
+    )
+    (ASSETS / "03-a-button.svg").write_text(
+        svg_doc(f'  <circle cx="{acx:.2f}" cy="{acy:.2f}" r="{br:.2f}" fill="{hex_rgb(FACE)}"/>\n')
+    )
+
+    def pill_svg(center: tuple[float, float]) -> str:
+        px, py = pt(center)
+        w, h = PILL_W * SIZE, PILL_H * SIZE
+        return (
+            f'  <g transform="translate({px:.2f} {py:.2f}) rotate({PILL_ANGLE:.2f})">\n'
+            f'    <rect x="{-w / 2:.2f}" y="{-h / 2:.2f}" width="{w:.2f}" height="{h:.2f}" rx="{h / 2:.2f}" fill="{hex_rgb(PILL)}"/>\n'
+            f"  </g>\n"
+        )
+
+    (ASSETS / "04-pills.svg").write_text(svg_doc(pill_svg(PILL_L) + pill_svg(PILL_R)))
+
+    flat = draw_icon(preview_glass=False)
+    # Split the flat mark into the layer PNGs Icon Composer can use as fallbacks.
+    transparent = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
+    dpad_png = transparent.copy()
+    draw_dpad(dpad_png, DPAD)
+    dpad_png.save(ASSETS / "01-dpad.png")
+    for name, center in (("02-b-button.png", B_BUTTON), ("03-a-button.png", A_BUTTON)):
+        layer = transparent.copy()
+        x, y = pt(center)
+        ImageDraw.Draw(layer).ellipse([x - br, y - br, x + br, y + br], fill=FACE)
+        layer.save(ASSETS / name)
+    pills = transparent.copy()
+    draw_pill(pills, PILL_L, PILL)
+    draw_pill(pills, PILL_R, PILL)
+    pills.save(ASSETS / "04-pills.png")
+    # Keep `flat` referenced so a future edit doesn't drop the composite check.
+    assert flat.getpixel((int(cx), int(cy)))[0] < 80
 
 
 def write_icon_json() -> None:
+    matte = {
+        "specular": False,
+        "shadow": {"kind": "neutral", "opacity": 0.18},
+        "translucency": {"enabled": False, "value": 0},
+    }
     doc = {
         "fill": {"solid": srgb(BODY)},
         "features": ["refractivity", "specular-location"],
         "groups": [
             {
-                "name": "Buttons",
+                "name": "Matte controls",
+                **matte,
+                "layers": [
+                    {"name": "D-pad", "image-name": "01-dpad.svg", "glass": False},
+                    {"name": "Select and Start", "image-name": "04-pills.svg", "glass": False},
+                ],
+            },
+            {
+                "name": "Face buttons",
                 "lighting": "individual",
                 "specular": True,
                 "specular-highlight-placement": "outside",
@@ -231,17 +269,8 @@ def write_icon_json() -> None:
                 "refractivity": {"enabled": True, "depth": 0.55, "strength": 0.7},
                 "blur-material": 0.35,
                 "layers": [
-                    {"name": "B button", "image-name": "01-b-button.svg", "glass": True},
-                    {"name": "A button", "image-name": "02-a-button.svg", "glass": True},
-                ],
-            },
-            {
-                "name": "Letters",
-                "specular": False,
-                "shadow": {"kind": "none", "opacity": 0},
-                "translucency": {"enabled": False, "value": 0},
-                "layers": [
-                    {"name": "B and A", "image-name": "03-letters.png", "glass": False},
+                    {"name": "B button", "image-name": "02-b-button.svg", "glass": True},
+                    {"name": "A button", "image-name": "03-a-button.svg", "glass": True},
                 ],
             },
         ],
@@ -252,14 +281,19 @@ def write_icon_json() -> None:
 
 
 def write_favicon() -> None:
-    # 64px mark: same two buttons and heavier letters, no glass (too small).
     (ROOT / "favicon.svg").write_text(
         """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#D6D4D0"/>
-  <circle cx="20.0" cy="29.7" r="9.2" fill="#7A1C40"/>
-  <circle cx="44.0" cy="19.4" r="9.2" fill="#7A1C40"/>
-  <text x="19.8" y="49.6" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">B</text>
-  <text x="43.9" y="40.8" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">A</text>
+  <rect x="16.2" y="14.8" width="3.7" height="21.5" rx="1.6" fill="#262422"/>
+  <rect x="7.4" y="23.7" width="21.5" height="3.7" rx="1.6" fill="#262422"/>
+  <circle cx="40.4" cy="29.6" r="5.8" fill="#7A1C40"/>
+  <circle cx="51.4" cy="18.8" r="5.8" fill="#7A1C40"/>
+  <g transform="translate(26.9 47.9) rotate(-18)">
+    <rect x="-2.5" y="-1.0" width="5.0" height="1.9" rx="0.95" fill="#62605E"/>
+  </g>
+  <g transform="translate(39.1 47.7) rotate(-18)">
+    <rect x="-2.5" y="-1.0" width="5.0" height="1.9" rx="0.95" fill="#62605E"/>
+  </g>
 </svg>
 """
     )
