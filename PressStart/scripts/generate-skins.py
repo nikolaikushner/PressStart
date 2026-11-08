@@ -275,11 +275,11 @@ def generate_advance() -> Image.Image:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    pocket = generate_pocket()
+    # pocket.png is the supplied Game Boy photograph. pocket.json is measured
+    # from that photo, including the LCD rect the game is drawn into.
     advance = generate_advance()
-    pocket.save(OUT / "pocket.png")
     advance.save(OUT / "advance.png")
-    print(f"wrote {OUT / 'pocket.png'} {pocket.size}")
+    print(f"left {OUT / 'pocket.png'} (photo skin)")
     print(f"wrote {OUT / 'advance.png'} {advance.size}")
 
 

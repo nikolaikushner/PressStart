@@ -19,7 +19,7 @@ struct LicensesView: View {
           .foregroundStyle(.secondary)
       }
       Section("Skins") {
-        Text("On-screen shells are original Press Start layouts in a light-grey / magenta / black control palette. Console trademarks are not claimed.")
+        Text("The Game Boy shell is a photograph of the original handheld, with the game drawn in the screen. The other shell is an original Press Start layout. Console trademarks are not claimed.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }

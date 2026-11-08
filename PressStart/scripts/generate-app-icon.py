@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-"""Generate the Press Start app icon as the on-screen gamepad.
+"""Generate the Press Start app icon from the Game Boy reference photo.
 
-Light-grey GameSir shell, a near-black D-pad (only a hair lighter than
-black), two deep-magenta face buttons, and dark-grey Select/Start pills.
+Shell, D-pad, and face buttons use colors sampled from that photo. Select and
+Start are the larger light-grey pills, tilted so the right end sits higher.
 The face buttons are the only Liquid Glass layers. The D-pad and pills stay
 matte so Icon Composer does not turn them into glass.
 
 Brand PNGs, the asset-catalog fallback, and PressStart/AppIcon.icon all come
-from this script. The in-app shells are generated separately by
-generate-skins.py with the same palette.
+from this script. The pocket shell is the photo itself.
 """
 
 from __future__ import annotations
@@ -26,30 +25,31 @@ APPICONSET = PRESS / "Resources" / "Assets.xcassets" / "AppIcon.appiconset"
 ICON_PKG = PRESS / "AppIcon.icon"
 ASSETS = ICON_PKG / "Assets"
 
-# Same GameSir palette as generate-skins.py.
-BODY = (214, 212, 208, 255)  # #D6D4D0 shell
-FACE = (122, 28, 64, 255)  # #7A1C40 face buttons
-FACE_HI = (158, 48, 92, 255)
-DPAD = (38, 36, 34, 255)  # near-black, a hair lighter
-DPAD_HI = (58, 56, 54, 255)
-DPAD_LO = (18, 16, 14, 255)
-PILL = (98, 96, 94, 255)  # dark grey, clearly not black
-PILL_HI = (128, 126, 124, 255)
+# Sampled from the Game Boy photo: shell face, button body, blue-black cross.
+BODY = (196, 195, 191, 255)  # #C4C3BF
+FACE = (140, 22, 78, 255)  # #8C164E
+FACE_HI = (210, 70, 130, 255)
+DPAD = (32, 34, 42, 255)  # near-black, a cool hair lighter
+DPAD_HI = (54, 56, 66, 255)
+DPAD_LO = (14, 16, 22, 255)
+PILL = (148, 146, 144, 255)  # light grey recess, not black
+PILL_HI = (196, 194, 190, 255)
 SIZE = 1024
 
-# Normalized to the reference sketch.
-DPAD_C = (0.283, 0.399)
-DPAD_ARM = 0.168
-# Game Boy cross: arm width is about 40% of the span, a bit thicker than the shell.
+# Control cluster from the photo, kept in proportion and centered on the square.
+# Select/Start are larger than the old slivers and tilt the other way (right end up).
+DPAD_C = (0.197, 0.428)
+DPAD_ARM = 0.127
 DPAD_THICK_RATIO = 0.80
-B_BUTTON = (0.631, 0.462)
-A_BUTTON = (0.803, 0.293)
-BUTTON_R = 0.090
-PILL_L = (0.420, 0.748)
-PILL_R = (0.611, 0.746)
-PILL_W = 0.078
-PILL_H = 0.030
-PILL_ANGLE = -18.0
+B_BUTTON = (0.705, 0.456)
+A_BUTTON = (0.870, 0.379)
+BUTTON_R = 0.060
+PILL_L = (0.354, 0.658)
+PILL_R = (0.534, 0.657)
+PILL_W = 0.150
+PILL_H = 0.046
+# PIL rotates counter-clockwise. Positive lifts the right end.
+PILL_ANGLE = 24.0
 
 
 def srgb(color: tuple[int, int, int, int]) -> str:
@@ -265,7 +265,7 @@ def write_layers() -> None:
         px, py = pt(center)
         w, h = PILL_W * SIZE, PILL_H * SIZE
         return (
-            f'  <g transform="translate({px:.2f} {py:.2f}) rotate({PILL_ANGLE:.2f})">\n'
+            f'  <g transform="translate({px:.2f} {py:.2f}) rotate({-PILL_ANGLE:.2f})">\n'
             f'    <rect x="{-w / 2:.2f}" y="{-h / 2:.2f}" width="{w:.2f}" height="{h:.2f}" rx="{h / 2:.2f}" fill="{hex_rgb(PILL)}"/>\n'
             f"  </g>\n"
         )
@@ -331,19 +331,24 @@ def write_icon_json() -> None:
 
 
 def write_favicon() -> None:
+    body = hex_rgb(BODY)
+    dpad = hex_rgb(DPAD)
+    dish = hex_rgb(DPAD_LO)
+    face = hex_rgb(FACE)
+    pill = hex_rgb(PILL)
     (ROOT / "favicon.svg").write_text(
-        """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#D6D4D0"/>
-  <rect x="15.2" y="14.2" width="6.2" height="22.6" rx="1.9" fill="#262422"/>
-  <rect x="7.0" y="22.4" width="22.6" height="6.2" rx="1.9" fill="#262422"/>
-  <circle cx="18.3" cy="25.5" r="1.35" fill="#12100E"/>
-  <circle cx="40.4" cy="29.6" r="5.8" fill="#7A1C40"/>
-  <circle cx="51.4" cy="18.8" r="5.8" fill="#7A1C40"/>
-  <g transform="translate(26.9 47.9) rotate(-18)">
-    <rect x="-2.5" y="-1.0" width="5.0" height="1.9" rx="0.95" fill="#62605E"/>
+        f"""<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="{body}"/>
+  <rect x="8.6" y="18.6" width="6.4" height="18.2" rx="2.0" fill="{dpad}"/>
+  <rect x="2.7" y="24.5" width="18.2" height="6.4" rx="2.0" fill="{dpad}"/>
+  <circle cx="11.8" cy="27.7" r="1.3" fill="{dish}"/>
+  <circle cx="45.1" cy="29.2" r="3.8" fill="{face}"/>
+  <circle cx="55.7" cy="24.3" r="3.8" fill="{face}"/>
+  <g transform="translate(22.7 42.1) rotate(-24)">
+    <rect x="-4.8" y="-1.5" width="9.6" height="2.9" rx="1.45" fill="{pill}"/>
   </g>
-  <g transform="translate(39.1 47.7) rotate(-18)">
-    <rect x="-2.5" y="-1.0" width="5.0" height="1.9" rx="0.95" fill="#62605E"/>
+  <g transform="translate(34.2 42.0) rotate(-24)">
+    <rect x="-4.8" y="-1.5" width="9.6" height="2.9" rx="1.45" fill="{pill}"/>
   </g>
 </svg>
 """

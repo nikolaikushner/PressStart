@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <g transform="translate(430.08 765.95) rotate(-18.00)">
-    <rect x="-39.94" y="-15.36" width="79.87" height="30.72" rx="15.36" fill="#62605E"/>
+  <g transform="translate(362.50 673.79) rotate(-24.00)">
+    <rect x="-76.80" y="-23.55" width="153.60" height="47.10" rx="23.55" fill="#949290"/>
   </g>
-  <g transform="translate(625.66 763.90) rotate(-18.00)">
-    <rect x="-39.94" y="-15.36" width="79.87" height="30.72" rx="15.36" fill="#62605E"/>
+  <g transform="translate(546.82 672.77) rotate(-24.00)">
+    <rect x="-76.80" y="-23.55" width="153.60" height="47.10" rx="23.55" fill="#949290"/>
   </g>
 </svg>
