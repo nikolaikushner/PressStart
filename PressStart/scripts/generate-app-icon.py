@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Generate the Press Start app icon.
 
-Layout follows the B / A reference: two equal magenta buttons on a light
-grey plate, B under the lower-left button and A under the upper-right one.
+Layout follows the B / A reference: two equal face buttons on the GameSir
+shell grey, B under the lower-left button and A under the upper-right one.
+Button and label colors match generate-skins.py.
 Letters are a step heavier than a regular bold.
 
 Icon Composer layers stay flat. Xcode 26 applies Liquid Glass (specular,
@@ -27,10 +28,11 @@ APPICONSET = PRESS / "Resources" / "Assets.xcassets" / "AppIcon.appiconset"
 ICON_PKG = PRESS / "AppIcon.icon"
 ASSETS = ICON_PKG / "Assets"
 
-# Plate and face color sampled from the B/A reference, not the old wine circle.
-BODY = (191, 191, 191, 255)  # #BFBFBF
-FACE = (217, 95, 156, 255)  # #D95F9C
-INK = (12, 12, 12, 255)
+# Same GameSir palette as the on-screen shells in generate-skins.py.
+BODY = (214, 212, 208, 255)  # #D6D4D0 shell
+FACE = (122, 28, 64, 255)  # #7A1C40 face buttons
+FACE_HI = (158, 48, 92, 255)
+INK = (26, 28, 46, 255)  # navy labels
 SIZE = 1024
 FONT = "/usr/share/fonts/opentype/cantarell/Cantarell-ExtraBold.otf"
 
@@ -71,15 +73,16 @@ def glass_disc(radius: float, albedo: tuple[int, int, int, int]) -> Image.Image:
             coverage = 1.0 if dist <= r - 0.6 else max(0.0, (r + 0.8 - dist) / 1.4)
             nx, ny = dx / r, dy / r
             edge = dist / r
-            # Thin top rim, like Liquid Glass, instead of a spherical highlight.
+            # Lift toward the GameSir highlight, not toward white.
             sheen = math.exp(-((ny + 0.72) ** 2) / 0.012) * math.exp(-(nx ** 2) / 0.22)
             rim = max(0.0, (edge - 0.90) / 0.10)
             rim_light = rim * (0.15 + 0.85 * max(0.0, -ny))
-            shade = 0.98 - 0.04 * max(0.0, ny)
-            cr = min(255.0, ar * shade + 90 * sheen + 160 * rim_light)
-            cg = min(255.0, ag * shade + 50 * sheen + 110 * rim_light)
-            cb = min(255.0, ab * shade + 70 * sheen + 130 * rim_light)
-            alpha = int(255 * coverage * 0.94)
+            mix = min(1.0, 0.55 * sheen + 0.70 * rim_light)
+            shade = 0.96 - 0.10 * max(0.0, ny)
+            cr = min(255.0, ar * shade * (1.0 - mix) + FACE_HI[0] * mix)
+            cg = min(255.0, ag * shade * (1.0 - mix) + FACE_HI[1] * mix)
+            cb = min(255.0, ab * shade * (1.0 - mix) + FACE_HI[2] * mix)
+            alpha = int(255 * coverage * 0.96)
             px[x, y] = (int(cr), int(cg), int(cb), alpha)
     return img
 
@@ -252,11 +255,11 @@ def write_favicon() -> None:
     # 64px mark: same two buttons and heavier letters, no glass (too small).
     (ROOT / "favicon.svg").write_text(
         """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#BFBFBF"/>
-  <circle cx="20.0" cy="29.7" r="9.2" fill="#D95F9C"/>
-  <circle cx="44.0" cy="19.4" r="9.2" fill="#D95F9C"/>
-  <text x="19.8" y="49.6" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#0C0C0C">B</text>
-  <text x="43.9" y="40.8" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#0C0C0C">A</text>
+  <rect width="64" height="64" rx="14" fill="#D6D4D0"/>
+  <circle cx="20.0" cy="29.7" r="9.2" fill="#7A1C40"/>
+  <circle cx="44.0" cy="19.4" r="9.2" fill="#7A1C40"/>
+  <text x="19.8" y="49.6" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">B</text>
+  <text x="43.9" y="40.8" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">A</text>
 </svg>
 """
     )

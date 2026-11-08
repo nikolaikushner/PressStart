@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#BFBFBF"/>
-  <circle cx="20.0" cy="29.7" r="9.2" fill="#D95F9C"/>
-  <circle cx="44.0" cy="19.4" r="9.2" fill="#D95F9C"/>
-  <text x="19.8" y="49.6" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#0C0C0C">B</text>
-  <text x="43.9" y="40.8" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#0C0C0C">A</text>
+  <rect width="64" height="64" rx="14" fill="#D6D4D0"/>
+  <circle cx="20.0" cy="29.7" r="9.2" fill="#7A1C40"/>
+  <circle cx="44.0" cy="19.4" r="9.2" fill="#7A1C40"/>
+  <text x="19.8" y="49.6" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">B</text>
+  <text x="43.9" y="40.8" text-anchor="middle" font-family="Arial Black, Cantarell, sans-serif" font-size="9.2" font-weight="800" fill="#1A1C2E">A</text>
 </svg>
