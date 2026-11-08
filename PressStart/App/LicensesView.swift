@@ -19,7 +19,7 @@ struct LicensesView: View {
           .foregroundStyle(.secondary)
       }
       Section("Skins") {
-        Text("On-screen shells are adapted community controller layouts. Console trademarks are not claimed.")
+        Text("On-screen shells are original Press Start layouts in a light-grey / magenta / black control palette. Console trademarks are not claimed.")
           .font(.footnote)
           .foregroundStyle(.secondary)
       }

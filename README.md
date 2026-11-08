@@ -63,6 +63,8 @@ open PressStart.xcodeproj
 
 4. Signing uses the Apple team signed into Xcode (`S37Z4QU5FT`, Mikalai Kushner). Run on an iPhone or simulator.
 
+5. App icon: flat mark is in `brand/` and `AppIcon.appiconset`. For Apple Liquid Glass, open `PressStart/AppIcon.icon` in **Icon Composer** (Xcode 26+) — charcoal Select pill + magenta action circle already have glass / specular / translucency. Rebuild flat assets with `PressStart/scripts/generate-app-icon.py` if you change the mark.
+
 `CoreRegistry` registers a core when its framework is linked (`canImport`). Game Boy, GBA, NES, SNES, and Mega Drive then play through DeltaCore’s Metal renderer. The shelf draws its own shell; Delta’s on-screen controller stays hidden.
 
 ## What’s in the app

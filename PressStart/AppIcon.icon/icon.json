@@ -1,0 +1,48 @@
+{
+  "fill": {
+    "solid": "extended-srgb:0.83922,0.83137,0.81569,1.00000"
+  },
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "groups": [
+    {
+      "name": "Controls",
+      "lighting": "individual",
+      "specular": true,
+      "specular-highlight-placement": "outside",
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.22
+      },
+      "refractivity": {
+        "enabled": true,
+        "depth": 0.55,
+        "strength": 0.7
+      },
+      "blur-material": 0.35,
+      "layers": [
+        {
+          "name": "Select pill",
+          "image-name": "01-select-pill.svg",
+          "glass": true
+        },
+        {
+          "name": "Action circle",
+          "image-name": "02-action-circle.svg",
+          "glass": true
+        }
+      ]
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "iOS"
+    ]
+  }
+}

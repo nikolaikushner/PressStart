@@ -32,9 +32,13 @@ targets:
         type: resources
         excludes:
           - "**/.DS_Store"
+      # Icon Composer Liquid Glass document (Xcode 26+ / Icon Composer).
+      # Flat AppIcon.appiconset remains for older tooling fallbacks.
+      - path: AppIcon.icon
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.nikolaikushner.pressstart
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_CFBundleDisplayName: Press Start
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.games
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
