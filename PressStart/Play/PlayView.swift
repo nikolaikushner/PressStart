@@ -59,7 +59,7 @@ struct PlayView: View {
   private var screen: some View {
     GeometryReader { geo in
       let ratio = aspect
-      let width = min(geo.size.width - 24, geo.size.height * ratio.w / ratio.h)
+      let width = min(geo.size.width, geo.size.height * ratio.w / ratio.h)
       let height = width * ratio.h / ratio.w
       ZStack {
         Color(white: 0.03)
@@ -70,7 +70,6 @@ struct PlayView: View {
       }
       .frame(width: width, height: height)
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-      .padding(.top, 8)
     }
     .frame(maxHeight: .infinity)
   }
