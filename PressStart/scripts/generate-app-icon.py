@@ -31,6 +31,8 @@ BODY = (214, 212, 208, 255)  # #D6D4D0 shell
 FACE = (122, 28, 64, 255)  # #7A1C40 face buttons
 FACE_HI = (158, 48, 92, 255)
 DPAD = (38, 36, 34, 255)  # near-black, a hair lighter
+DPAD_HI = (58, 56, 54, 255)
+DPAD_LO = (18, 16, 14, 255)
 PILL = (98, 96, 94, 255)  # dark grey, clearly not black
 PILL_HI = (128, 126, 124, 255)
 SIZE = 1024
@@ -38,7 +40,8 @@ SIZE = 1024
 # Normalized to the reference sketch.
 DPAD_C = (0.283, 0.399)
 DPAD_ARM = 0.168
-DPAD_THICK = 0.058
+# Game Boy cross: arm width is about 40% of the span, a bit thicker than the shell.
+DPAD_THICK_RATIO = 0.80
 B_BUTTON = (0.631, 0.462)
 A_BUTTON = (0.803, 0.293)
 BUTTON_R = 0.090
@@ -114,14 +117,61 @@ def contact_shadow(canvas: Image.Image, cx: float, cy: float, radius: float) -> 
     canvas.alpha_composite(layer.filter(ImageFilter.GaussianBlur(radius=radius * 0.18)))
 
 
-def draw_dpad(canvas: Image.Image, color: tuple[int, int, int, int]) -> None:
+def dpad_box() -> tuple[float, float, float, float]:
     cx, cy = pt(DPAD_C)
     arm = DPAD_ARM * SIZE
-    thick = DPAD_THICK * SIZE
-    radius = thick * 0.42
+    thick = arm * DPAD_THICK_RATIO
+    return cx, cy, arm, thick
+
+
+def draw_dpad(canvas: Image.Image, *, molded: bool) -> None:
+    """Chunky Game Boy cross: broad arms, rounded ends, center dish."""
+    cx, cy, arm, thick = dpad_box()
+    radius = thick * 0.24
+    if molded:
+        shadow = Image.new("RGBA", canvas.size, (0, 0, 0, 0))
+        sd = ImageDraw.Draw(shadow)
+        sd.rounded_rectangle(
+            [cx - thick / 2 + 4, cy - arm + 8, cx + thick / 2 + 4, cy + arm + 8],
+            radius=radius,
+            fill=(0, 0, 0, 70),
+        )
+        sd.rounded_rectangle(
+            [cx - arm + 4, cy - thick / 2 + 8, cx + arm + 4, cy + thick / 2 + 8],
+            radius=radius,
+            fill=(0, 0, 0, 70),
+        )
+        canvas.alpha_composite(shadow.filter(ImageFilter.GaussianBlur(radius=thick * 0.12)))
     draw = ImageDraw.Draw(canvas)
-    draw.rounded_rectangle([cx - thick / 2, cy - arm, cx + thick / 2, cy + arm], radius=radius, fill=color)
-    draw.rounded_rectangle([cx - arm, cy - thick / 2, cx + arm, cy + thick / 2], radius=radius, fill=color)
+    draw.rounded_rectangle(
+        [cx - thick / 2, cy - arm, cx + thick / 2, cy + arm],
+        radius=radius,
+        fill=DPAD,
+    )
+    draw.rounded_rectangle(
+        [cx - arm, cy - thick / 2, cx + arm, cy + thick / 2],
+        radius=radius,
+        fill=DPAD,
+    )
+    if molded:
+        lip = thick * 0.16
+        draw.rounded_rectangle(
+            [cx - thick / 2 + lip, cy - arm + lip, cx + thick / 2 - lip, cy - arm + thick * 0.42],
+            radius=radius * 0.6,
+            fill=DPAD_HI,
+        )
+        draw.rounded_rectangle(
+            [cx - arm + lip, cy - thick / 2 + lip, cx - arm + thick * 0.42, cy + thick / 2 - lip],
+            radius=radius * 0.6,
+            fill=DPAD_HI,
+        )
+    dish = thick * 0.20
+    draw.ellipse([cx - dish, cy - dish, cx + dish, cy + dish], fill=DPAD_LO)
+    if molded:
+        draw.ellipse(
+            [cx - dish * 0.45, cy - dish * 0.55, cx + dish * 0.28, cy + dish * 0.12],
+            fill=DPAD_HI,
+        )
 
 
 def draw_pill(
@@ -148,7 +198,7 @@ def draw_pill(
 
 def draw_icon(preview_glass: bool) -> Image.Image:
     img = Image.new("RGBA", (SIZE, SIZE), BODY)
-    draw_dpad(img, DPAD)
+    draw_dpad(img, molded=preview_glass)
     draw_pill(img, PILL_L, PILL, PILL_HI if preview_glass else None)
     draw_pill(img, PILL_R, PILL, PILL_HI if preview_glass else None)
     bcx, bcy = pt(B_BUTTON)
@@ -191,13 +241,13 @@ def write_layers() -> None:
         if stale.is_file():
             stale.unlink()
 
-    cx, cy = pt(DPAD_C)
-    arm = DPAD_ARM * SIZE
-    thick = DPAD_THICK * SIZE
-    radius = thick * 0.42
+    cx, cy, arm, thick = dpad_box()
+    radius = thick * 0.24
+    dish = thick * 0.20
     dpad = svg_doc(
         f'  <rect x="{cx - thick / 2:.2f}" y="{cy - arm:.2f}" width="{thick:.2f}" height="{arm * 2:.2f}" rx="{radius:.2f}" fill="{hex_rgb(DPAD)}"/>\n'
         f'  <rect x="{cx - arm:.2f}" y="{cy - thick / 2:.2f}" width="{arm * 2:.2f}" height="{thick:.2f}" rx="{radius:.2f}" fill="{hex_rgb(DPAD)}"/>\n'
+        f'  <circle cx="{cx:.2f}" cy="{cy:.2f}" r="{dish:.2f}" fill="{hex_rgb(DPAD_LO)}"/>\n'
     )
     (ASSETS / "01-dpad.svg").write_text(dpad)
 
@@ -226,7 +276,7 @@ def write_layers() -> None:
     # Split the flat mark into the layer PNGs Icon Composer can use as fallbacks.
     transparent = Image.new("RGBA", (SIZE, SIZE), (0, 0, 0, 0))
     dpad_png = transparent.copy()
-    draw_dpad(dpad_png, DPAD)
+    draw_dpad(dpad_png, molded=False)
     dpad_png.save(ASSETS / "01-dpad.png")
     for name, center in (("02-b-button.png", B_BUTTON), ("03-a-button.png", A_BUTTON)):
         layer = transparent.copy()
@@ -284,8 +334,9 @@ def write_favicon() -> None:
     (ROOT / "favicon.svg").write_text(
         """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#D6D4D0"/>
-  <rect x="16.2" y="14.8" width="3.7" height="21.5" rx="1.6" fill="#262422"/>
-  <rect x="7.4" y="23.7" width="21.5" height="3.7" rx="1.6" fill="#262422"/>
+  <rect x="15.2" y="14.2" width="6.2" height="22.6" rx="1.9" fill="#262422"/>
+  <rect x="7.0" y="22.4" width="22.6" height="6.2" rx="1.9" fill="#262422"/>
+  <circle cx="18.3" cy="25.5" r="1.35" fill="#12100E"/>
   <circle cx="40.4" cy="29.6" r="5.8" fill="#7A1C40"/>
   <circle cx="51.4" cy="18.8" r="5.8" fill="#7A1C40"/>
   <g transform="translate(26.9 47.9) rotate(-18)">
