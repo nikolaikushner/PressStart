@@ -1,6 +1,6 @@
 {
   "fill": {
-    "solid": "extended-srgb:0.83922,0.83137,0.81569,1.00000"
+    "solid": "extended-srgb:0.74902,0.74902,0.74902,1.00000"
   },
   "features": [
     "refractivity",
@@ -8,7 +8,7 @@
   ],
   "groups": [
     {
-      "name": "Controls",
+      "name": "Buttons",
       "lighting": "individual",
       "specular": true,
       "specular-highlight-placement": "outside",
@@ -28,14 +28,33 @@
       "blur-material": 0.35,
       "layers": [
         {
-          "name": "Select pill",
-          "image-name": "01-select-pill.svg",
+          "name": "B button",
+          "image-name": "01-b-button.svg",
           "glass": true
         },
         {
-          "name": "Action circle",
-          "image-name": "02-action-circle.svg",
+          "name": "A button",
+          "image-name": "02-a-button.svg",
           "glass": true
+        }
+      ]
+    },
+    {
+      "name": "Letters",
+      "specular": false,
+      "shadow": {
+        "kind": "none",
+        "opacity": 0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      },
+      "layers": [
+        {
+          "name": "B and A",
+          "image-name": "03-letters.png",
+          "glass": false
         }
       ]
     }
