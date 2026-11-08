@@ -5,6 +5,7 @@ struct LibraryView: View {
   @EnvironmentObject private var library: LibraryStore
   var onOpen: (GameRecord) -> Void
   var onAdd: () -> Void
+  @State private var gamePendingDelete: GameRecord?
 
   var body: some View {
     ZStack(alignment: .bottom) {
@@ -41,6 +42,22 @@ struct LibraryView: View {
       Button("OK", role: .cancel) { library.lastError = nil }
     } message: {
       Text(library.lastError ?? "")
+    }
+    .alert(
+      "Remove from shelf?",
+      isPresented: Binding(
+        get: { gamePendingDelete != nil },
+        set: { if !$0 { gamePendingDelete = nil } }
+      ),
+      presenting: gamePendingDelete
+    ) { game in
+      Button("Delete", role: .destructive) {
+        library.delete(game)
+        gamePendingDelete = nil
+      }
+      Button("Cancel", role: .cancel) { gamePendingDelete = nil }
+    } message: { game in
+      Text("“\(game.title)” will be removed from this device, including its save data.")
     }
   }
 
@@ -117,6 +134,14 @@ struct LibraryView: View {
             GameCardView(game: game)
           }
           .buttonStyle(.plain)
+          .contextMenu {
+            Button("Delete", systemImage: "trash", role: .destructive) {
+              gamePendingDelete = game
+            }
+          }
+          .accessibilityAction(named: "Delete") {
+            gamePendingDelete = game
+          }
         }
       }
     }

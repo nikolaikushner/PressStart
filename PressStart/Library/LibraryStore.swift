@@ -123,6 +123,18 @@ final class LibraryStore: ObservableObject {
     return Self.coversDirectory.appendingPathComponent(name)
   }
 
+  func delete(_ game: GameRecord) {
+    let fm = FileManager.default
+    try? fm.removeItem(at: game.fileURL)
+    try? fm.removeItem(at: stateURL(for: game.id))
+    try? fm.removeItem(at: sramURL(for: game))
+    if let cover = coverURL(for: game) {
+      try? fm.removeItem(at: cover)
+    }
+    games.removeAll { $0.id == game.id }
+    persist()
+  }
+
   private func importOne(_ url: URL) {
     let scoped = url.startAccessingSecurityScopedResource()
     defer { if scoped { url.stopAccessingSecurityScopedResource() } }
