@@ -24,6 +24,7 @@ struct PlayView: View {
         shell
       }
     }
+    .preferredColorScheme(.dark)
     .statusBarHidden(true)
     .toolbar(.hidden, for: .navigationBar)
     .onAppear(perform: boot)

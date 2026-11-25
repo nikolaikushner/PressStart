@@ -30,5 +30,10 @@ struct LicensesView: View {
       }
     }
     .navigationTitle("Licenses")
+    .toolbar(.visible, for: .navigationBar)
+    .scrollContentBackground(.hidden)
+    .background(Theme.shelfBackground.ignoresSafeArea())
+    .toolbarBackground(Theme.shelfTop, for: .navigationBar)
+    .toolbarBackground(.visible, for: .navigationBar)
   }
 }

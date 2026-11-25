@@ -1,15 +1,28 @@
 import SwiftUI
 
 enum Theme {
-  static let shelf = Color.black
-  static let ink = Color(red: 0.96, green: 0.96, blue: 0.96)
-  static let muted = Color(red: 0.56, green: 0.56, blue: 0.58)
-  static let card = Color(red: 0.11, green: 0.11, blue: 0.12)
-  static let line = Color.white.opacity(0.08)
-  static let dockFill = Color(red: 0.28, green: 0.28, blue: 0.31).opacity(0.55)
+  /// Daylight wash of the original Game Boy LCD — pale yellow-green, not the later gray shells.
+  static let shelfTop = Color(red: 0.925, green: 0.949, blue: 0.839)
+  static let shelf = Color(red: 0.839, green: 0.878, blue: 0.690)
+  static let ink = Color(red: 0.086, green: 0.141, blue: 0.047)
+  static let muted = Color(red: 0.227, green: 0.290, blue: 0.133)
+  static let card = Color(red: 0.957, green: 0.969, blue: 0.894)
+  static let line = Color(red: 0.12, green: 0.18, blue: 0.06).opacity(0.14)
+  static let dockFill = Color(red: 0.957, green: 0.969, blue: 0.894).opacity(0.92)
   static let accentA = Color(red: 1.0, green: 0.30, blue: 0.60)
   static let accentB = Color(red: 1.0, green: 0.54, blue: 0.24)
   static let pip = Color(red: 0.29, green: 0.87, blue: 0.50)
+  static let boxDepth = Color(red: 0.141, green: 0.173, blue: 0.071)
+  static let boxShadow = Color(red: 0.12, green: 0.16, blue: 0.05).opacity(0.36)
+
+  static let shelfSurfaceTop = Color(red: 0.659, green: 0.722, blue: 0.439)
+  static let shelfSurfaceBottom = Color(red: 0.549, green: 0.612, blue: 0.337)
+  static let shelfLipTop = Color(red: 0.424, green: 0.478, blue: 0.251)
+  static let shelfLipBottom = Color(red: 0.290, green: 0.337, blue: 0.165)
+
+  static var shelfBackground: LinearGradient {
+    LinearGradient(colors: [shelfTop, shelf], startPoint: .top, endPoint: .bottom)
+  }
 
   static var dockGradient: LinearGradient {
     LinearGradient(colors: [accentA, accentB], startPoint: .leading, endPoint: .trailing)

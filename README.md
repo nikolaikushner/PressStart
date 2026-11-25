@@ -69,7 +69,7 @@ open PressStart.xcodeproj
 
 ## What’s in the app
 
-- Dark shelf grouped by console, search, frosted **Games | Add** dock  
+- Light Game Boy shelf grouped by console, search, frosted **Games | Add** dock  
 - ROM import via Files with byte-based console detection  
 - Pocket / Advance on-screen shells (no console trademarks)  
 - Soft-pad hits + Apple `GameController` support for Bluetooth / USB gamepads  

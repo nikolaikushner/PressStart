@@ -10,7 +10,7 @@ struct PressStartApp: App {
       RootView()
         .environmentObject(library)
         .environmentObject(gamepad)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .task {
           CoreRegistry.shared.bootstrap()
           gamepad.start()
